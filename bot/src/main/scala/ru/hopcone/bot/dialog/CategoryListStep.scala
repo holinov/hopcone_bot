@@ -1,10 +1,12 @@
 package ru.hopcone.bot.dialog
 
 import ru.hopcone.bot.data.dao.{CategoriesDAO, ProductsDAO}
-import ru.hopcone.bot.data.models.DB.Tables.ShopItems
-import ru.hopcone.bot.data.models.{Database, ProductCategory, ShopItem}
+import ru.hopcone.bot.data.models.Database
+import ru.hopcone.bot.models.Tables._
 
-case class CategoryListStep(categories: Seq[ProductCategory])(implicit database: Database) extends DialogStep {
+case class CategoryListStep(categories: Seq[ShopCategoryRow])(implicit database: Database) extends DialogStep {
+  logger.debug(s"CategoryListStep fro $categories")
+
   override def title: String = "Что вас интересует?"
 
   override def buttons: Seq[String] = categories.map(_.name)
@@ -18,6 +20,7 @@ case class CategoryListStep(categories: Seq[ProductCategory])(implicit database:
         case Some(cat) =>
           val subcats = CategoriesDAO.childCategories(cat)
           if (subcats.nonEmpty) {
+            logger.debug(s"Found subcategories $subcats")
             CategoryListStep(subcats)
           } else {
             val categoryItems = ProductsDAO.productsInCategory(cat)

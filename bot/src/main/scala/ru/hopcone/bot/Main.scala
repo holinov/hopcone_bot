@@ -9,14 +9,14 @@ object Main extends LazyLogging {
 
     import scala.concurrent.ExecutionContext.Implicits.global
 
-    val config = ConfigFactory.defaultApplication()
+    val config = ConfigFactory.load()
     logger.info(s"Starting with config $config")
 
     val db = DB.database("hopcone_database")
 
     try {
       val bot = new Bot(config, db)
-      val initResult = db.run(DB.initDatabase)
+      val initResult = DB.initialize(db)
 
       initResult.onComplete { _ =>
         logger.info("DATABASE CREATED")

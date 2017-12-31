@@ -1,14 +1,17 @@
 package ru.hopcone.bot
 
+import com.typesafe.scalalogging.LazyLogging
 import info.mukel.telegrambot4s.models.{KeyboardButton, ReplyKeyboardMarkup}
 import ru.hopcone.bot.BotCommands.{IndexResponse, UserMessageResponse}
-import ru.hopcone.bot.dialog.DialogStep
 
 import scala.language.implicitConversions
 
-package object render extends DefaultImplicits {
+package object render extends DefaultImplicits with LazyLogging {
   implicit def render(r: UserMessageResponse): BotResponseRenderer[UserMessageResponse] = {
+
     new BotResponseRenderer[UserMessageResponse] {
+      logger.debug(s"Responding with ${r}\n${r.text}\t${r.buttons}")
+
       override def text: String = r.text.get
 
       override def keyboardMarkup: Option[ReplyKeyboardMarkup] = {

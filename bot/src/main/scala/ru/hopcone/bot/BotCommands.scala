@@ -1,7 +1,7 @@
 package ru.hopcone.bot
 
 import info.mukel.telegrambot4s.models.Message
-import ru.hopcone.bot.data.models._
+import ru.hopcone.bot.models.Tables._
 
 import scala.language.implicitConversions
 
@@ -24,7 +24,7 @@ object BotCommands extends DefaultImplicits {
   case class Index(categoryId: Option[Long], message: Message)
     extends BotCommand
 
-  case class IndexResponse(request: Index, categories: List[ProductCategory])
+  case class IndexResponse(request: Index, categories: List[ShopCategoryRow])
     extends BotResponse[Index]
 
 

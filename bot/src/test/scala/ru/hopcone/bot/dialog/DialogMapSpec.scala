@@ -1,7 +1,7 @@
-package ru.hopcone.bot.test.support
+package ru.hopcone.bot.dialog
 
 import ru.hopcone.bot.dialog.DialogMapBuilder._
-import ru.hopcone.bot.dialog._
+import ru.hopcone.bot.test.support.DBBased
 
 
 class DialogMapSpec extends DBBased {
@@ -17,8 +17,11 @@ class DialogMapSpec extends DBBased {
   }
 
   describe("DialogMapBuilder") {
-    val builder = new DialogMapBuilder
+    val builder = new DialogMapBuilder().build
+
+    println(s"ROOT: ${builder.rootStep}")
     val mainTransition = builder.rootStep.next(MenuButton)
+    println(s"MT: $mainTransition .. \nROOT:${builder.rootStep}")
     val catTransition = mainTransition.get.next(mainTransition.get.buttons.head)
 
     it("should build root step info") {
@@ -37,6 +40,7 @@ class DialogMapSpec extends DBBased {
         c.next(subcatTitle)
       }).get
       subcatTransition shouldNot be(None)
+      println(s"SCTR: $subcatTransition")
       subcatTransition.get.buttons shouldNot have size 0
     }
   }

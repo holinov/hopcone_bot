@@ -1,8 +1,8 @@
 package ru.hopcone.bot.dialog
 
-import ru.hopcone.bot.data.models.{ProductCategory, ShopItem}
+import ru.hopcone.bot.models.Tables._
 
-case class CategoryProductListStep(category: ProductCategory, products: Seq[ShopItem])
+case class CategoryProductListStep(category: ShopCategoryRow, products: Seq[ShopItemRow])
   extends DialogStep {
   override def title: String = s"Что из ${category.name} вас интересует?"
 

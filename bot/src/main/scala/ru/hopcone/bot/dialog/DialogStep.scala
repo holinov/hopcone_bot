@@ -12,6 +12,10 @@ trait DialogStep extends LazyLogging {
   def onTransitionTo(transitionCommand: String): PartialFunction[String, Unit] = Map.empty
 
   def next(input: String): Option[DialogStep] =
-    if (transitions.isDefinedAt(input)) Some(transitions(input))
+    if (transitions.isDefinedAt(input)) {
+      val res = Some(transitions(input))
+      logger.debug(s"Searching transition for $input. Found $res")
+      res
+    }
     else None
 }

@@ -4,18 +4,18 @@ import akka.actor.ActorRef
 import akka.pattern.ask
 import com.typesafe.config.Config
 import info.mukel.telegrambot4s.api._
+import info.mukel.telegrambot4s.api.declarative.ToCommand._
 import info.mukel.telegrambot4s.api.declarative._
 import info.mukel.telegrambot4s.models._
 import org.json4s.jackson.Serialization._
 import ru.hopcone.bot.BotCommands._
+import ru.hopcone.bot.actors.BotActor
 import ru.hopcone.bot.data.models._
 import ru.hopcone.bot.render._
 
 import scala.concurrent.Future
 import scala.io.Source
 import scala.language.implicitConversions
-import ToCommand._
-import ru.hopcone.bot.actors.BotActor
 
 class Bot(config: Config, db: Database)
   extends TelegramBot
@@ -42,6 +42,7 @@ class Bot(config: Config, db: Database)
     logger.debug(s"$sep\nReceived msg: ${writePretty(msg)}\n$sep")
     askBot(UserMessage(msg)) { resp : UserMessageResponse =>
       renderResponse(resp)
+      logger.debug(s"Responded ${resp}")
     }
   }
   def stop(): Future[Unit] = shutdown()

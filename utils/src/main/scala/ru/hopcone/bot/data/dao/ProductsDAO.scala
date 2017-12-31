@@ -1,21 +1,13 @@
 package ru.hopcone.bot.data.dao
 
-import ru.hopcone.bot.data.models.DB.Tables.ShopItems
-import ru.hopcone.bot.data.models.{Database, ProductCategory, ShopItem}
-import slick.dbio.Effect
+//import ru.hopcone.bot.data.models.DB.Tables.ShopItems
+import ru.hopcone.bot.data.models.Database
+import ru.hopcone.bot.models.Tables._
 import slick.jdbc.PostgresProfile.api._
-import slick.sql.FixedSqlStreamingAction
-
-import scala.concurrent.Await
 
 
-object ProductsDAO extends TableQuery(new ShopItems(_)) with AbstractDAO[ProductCategory] {
-
-  private def productsInCategoryQuery(cat: ProductCategory) = {
-    filter(_.categoryId === cat.id)
-  }
-
-  def productsInCategory(cat: ProductCategory)(implicit db: Database): Seq[ShopItem] = {
-    run(productsInCategoryQuery(cat).result)
+object ProductsDAO extends AbstractDAO[ShopItemRow] {
+  def productsInCategory(cat: ShopCategoryRow)(implicit db: Database): Seq[ShopItemRow] = {
+    run(ShopItem.filter(_.categoryId === cat.id).result)
   }
 }
