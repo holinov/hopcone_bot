@@ -25,7 +25,7 @@ class DialogMapSpec extends DBBased {
     val catTransition = mainTransition.get.next(mainTransition.get.buttons.head)
 
     it("should build root step info") {
-      builder.rootStep.title should be(MainMenuTitle)
+      builder.rootStep.stepText should be(MainMenuTitle)
       builder.rootStep.buttons should have size 2
     }
 

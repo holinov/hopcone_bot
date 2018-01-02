@@ -1,21 +1,20 @@
 package ru.hopcone.bot.data.dao
 
 //import ru.hopcone.bot.data.dao.ProductsDAO.MaxTimeout
-import ru.hopcone.bot.data.models._
-import slick.dbio.Effect
-import slick.sql.FixedSqlStreamingAction
+import com.typesafe.scalalogging.LazyLogging
+import ru.hopcone.bot.data.models
+import slick.dbio.{DBIOAction, NoStream}
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
-trait AbstractDAO[EntryType] {
+trait AbstractDAO[EntryType] extends LazyLogging {
+
+  val NewEntryId: Int = -1
 
   protected val MaxTimeout: Duration = 10.seconds
-  def run[T](stmt: FixedSqlStreamingAction[Seq[T], T, Effect.Read])
-            (implicit db: Database): Seq[T] =
-    Await.result(db.run(stmt), MaxTimeout)
 
-//  def run(stmt:FixedSqlStreamingAction[Seq[T], T, Effect.Read])
-//         (implicit db: Database): Seq[T] =
-//    db.run(stmt).result(MaxTimeout)
+  def run[T](insertStmt: DBIOAction[T, NoStream, Nothing])
+            (implicit db: models.DatabaseManager): T =
+    Await.result(db.run(insertStmt), MaxTimeout)
 }

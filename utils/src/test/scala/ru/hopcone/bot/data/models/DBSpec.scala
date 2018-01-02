@@ -12,9 +12,5 @@ class DBSpec extends FunSpec with Matchers {
         statementsText shouldNot have size 0
       }
     }
-
-    describe("(while populating DB)"){
-      println("OK 1")
-    }
   }
 }

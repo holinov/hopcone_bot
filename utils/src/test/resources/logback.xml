@@ -19,11 +19,9 @@
     </appender>
 
     <logger name="slick" level="INFO"/>
-    <logger name="com.zaxxer.hikari" level="INFO"/>
     <logger name="ru.hopcone.bot" level="DEBUG"/>
 
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
-        <appender-ref ref="ROLLING"/>
     </root>
 </configuration>

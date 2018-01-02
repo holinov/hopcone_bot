@@ -1,7 +1,6 @@
 package ru.hopcone.bot.actors
 
 import akka.actor.{Actor, ActorRef}
-import ru.hopcone.bot.data.models.Database
 
 import scala.collection.mutable
 

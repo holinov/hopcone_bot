@@ -17,7 +17,7 @@ import scala.concurrent.Future
 import scala.io.Source
 import scala.language.implicitConversions
 
-class Bot(config: Config, db: Database)
+class Bot(config: Config, db: DatabaseManager)
   extends TelegramBot
     with Polling
     with Commands
@@ -42,7 +42,7 @@ class Bot(config: Config, db: Database)
     logger.debug(s"$sep\nReceived msg: ${writePretty(msg)}\n$sep")
     askBot(UserMessage(msg)) { resp : UserMessageResponse =>
       renderResponse(resp)
-      logger.debug(s"Responded ${resp}")
+      logger.debug(s"Responded $resp")
     }
   }
   def stop(): Future[Unit] = shutdown()
