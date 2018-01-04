@@ -3,12 +3,12 @@ package ru.hopcone.bot.models
 import ru.hopcone
 import ru.hopcone.bot
 import ru.hopcone.bot.dao.OrderDataDAO
-import ru.hopcone.bot.models
 import ru.hopcone.bot.models.Tables.OrderDataRow
 import ru.hopcone.bot.state.UserSession
+import ru.hopcone.bot.{Notificator, models}
 
 case class DialogStepContext(user: UserSession, private var ord: Option[OrderDataRow] = None)
-                            (implicit database: DatabaseManager) {
+                            (implicit database: DatabaseManager, notificator: Notificator) {
   def confirmOrder(): OrderDataRow = {
     val confirmed = OrderDataDAO.setStatus(ord.get, "confirmed")
     clearOrder()
@@ -29,4 +29,6 @@ case class DialogStepContext(user: UserSession, private var ord: Option[OrderDat
   def setOrderDeliveryAddress(address: bot.models.Tables.DeliveryAddressRow): Unit = {
     ord = ord.map(o => o.copy(deliveryAddress = Some(address.id)))
   }
+
+  def notifyAdmins(notification: String): Unit = notificator.notify(notification)
 }

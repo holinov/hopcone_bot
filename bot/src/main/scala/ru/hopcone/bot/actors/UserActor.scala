@@ -3,20 +3,21 @@ package ru.hopcone.bot.actors
 import akka.actor.Props
 import info.mukel.telegrambot4s.models.{User => TUser}
 import ru.hopcone.bot.BotCommands.{UserMessage, UserMessageResponse, UserMessageResponseError}
+import ru.hopcone.bot.Notificator
 import ru.hopcone.bot.dao.UserInfoDAO
 import ru.hopcone.bot.dialog.{DialogMap, DialogMapBuilder, DialogProcessor}
 import ru.hopcone.bot.models.Tables.UserInfoRow
 import ru.hopcone.bot.models._
 import ru.hopcone.bot.state.UserSession
 
-class UserActor(user: TUser, implicit val db: DatabaseManager) extends BasicActor {
+class UserActor(user: TUser, implicit val db: DatabaseManager, implicit val notificator: Notificator) extends BasicActor {
   private implicit val dialogContext: DialogStepContext = DialogStepContext(UserSession(user))
   private implicit val dialogMap: DialogMap = new DialogMapBuilder().build
 
   private val dialogProcessor = new DialogProcessor(dialogMap)
   private var currentDialogStep = dialogProcessor.step
 
-  UserInfoDAO.touchUser(UserInfoRow(user.id, user.username.get, user.id))
+  UserInfoDAO.touchUser(UserInfoRow(user.id, user.username.get, user.id, user.username.get))
 
   override def receive: Receive = {
     case requestMessage: UserMessage =>
@@ -24,7 +25,9 @@ class UserActor(user: TUser, implicit val db: DatabaseManager) extends BasicActo
       val txt = requestMessage.message.text
       txt.foreach { input =>
         try {
-          val nextStep = dialogProcessor.processInput(input).nextStep
+          val transitionResult = dialogProcessor.processInput(input)
+          logger.debug(s"TransitionResult: ${pp(transitionResult)}")
+          val nextStep = transitionResult.nextStep
           val title = nextStep.stepText
           val buttons = nextStep.getButtons
           val response = UserMessageResponse(title, buttons, requestMessage)
@@ -45,5 +48,5 @@ class UserActor(user: TUser, implicit val db: DatabaseManager) extends BasicActo
 }
 
 object UserActor {
-  def props(user: TUser, db: DatabaseManager): Props = Props(new UserActor(user, db))
+  def props(user: TUser, db: DatabaseManager, notificator: Notificator): Props = Props(new UserActor(user, db, notificator))
 }

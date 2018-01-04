@@ -3,6 +3,7 @@ package ru.hopcone.bot.support
 import com.typesafe.config.{Config, ConfigFactory}
 import info.mukel.telegrambot4s.models.User
 import org.scalatest.{BeforeAndAfterAll, FunSpecLike, Matchers}
+import ru.hopcone.bot.Notificator
 import ru.hopcone.bot.dialog.{DialogMap, DialogMapBuilder}
 import ru.hopcone.bot.models.{DB, DatabaseManager, DialogStepContext}
 import ru.hopcone.bot.state.UserSession
@@ -15,6 +16,11 @@ trait BaseSpecLike extends FunSpecLike with Matchers with BeforeAndAfterAll {
   val config: Config = ConfigFactory.load()
   val user: User = User(-1999, isBot = false, "test", Some("user"), Some("test_user"), Some("RU"))
 
+  implicit lazy val notificator: Notificator = new Notificator(config, null) {
+    override def notifyUser(userId: Long, notification: String): Unit = {}
+
+    override def notify(notification: String): Unit = {}
+  }
   implicit lazy val userSession: UserSession = UserSession(user)
   implicit lazy val ctx: DialogStepContext = DialogStepContext(userSession)
   implicit lazy val dialogMap: DialogMap = DialogMapBuilder()

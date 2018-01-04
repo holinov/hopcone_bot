@@ -20,8 +20,12 @@ object OrderItemDAO extends AbstractDAO[OrderItemRow] {
   def ensureOrder(implicit database: DatabaseManager, ctx: DialogStepContext): Tables.OrderDataRow = ctx.order match {
     case Some(order) => order
     case None =>
-      val orderRow = buildNewOrder(ctx.userId)
-      val order = OrderDataDAO.insert(orderRow)
+      val order = OrderDataDAO.findLastNewOrder(ctx.userId) match {
+        case Some(o) => o
+        case None =>
+          val orderRow = buildNewOrder(ctx.userId)
+          OrderDataDAO.insert(orderRow)
+      }
       ctx.updateOrder(order)
   }
 

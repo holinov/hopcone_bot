@@ -17,49 +17,41 @@ import scala.concurrent.Future
 import scala.io.Source
 import scala.language.implicitConversions
 
-class Bot(config: Config, db: DatabaseManager)
-  extends TelegramBot
-    with Polling
-    with Commands
-    with Messages
-    with Help
-    with DefaultImplicits {
+class Bot(config: Config, db: DatabaseManager) extends TelegramBot
+  with Polling
+  with Commands
+  with Messages
+  with Help
+  with DefaultImplicits {
 
   lazy val token: String = scala.util.Properties
     .envOrNone("BOT_TOKEN")
     .getOrElse(Source.fromFile("bot.token").getLines().mkString)
     .trim
+
   private val sep = "-" * 10
   private var botActor: ActorRef = _
+
   def connect(): Unit = {
     logger.info("Starting bot")
     run()
-    botActor = system.actorOf(BotActor.props(db), "hopcone_bot")
+    val notificator = new Notificator(config, this)
+    botActor = system.actorOf(BotActor.props(db, notificator), "hopcone_bot")
+    notificator.notify("Bot started")
     logger.info("Bot started")
   }
 
-  onMessage { implicit msg =>
-    logger.debug(s"$sep\nReceived msg: ${writePretty(msg)}\n$sep")
-    askBot(UserMessage(msg)) { resp : UserMessageResponse =>
-      renderResponse(resp)
-      logger.debug(s"Responded $resp")
-    }
-  }
   def stop(): Future[Unit] = shutdown()
 
-  private val startCommandTriggers = Seq('start, 'привет)
-  onCommandWithHelp(startCommandTriggers: _*)("Начать общение") { implicit msg =>
-    withArgs { args =>
-      logger.debug(s"Start new user with\n$args")
-      reply(s"Рад вас видеть! У нас самое вкусное пиво!")
+  onMessage { implicit msg =>
+    logger.debug(s"$sep\nReceived msg: ${writePretty(msg)}\n$sep")
+    askBot(UserMessage(msg)) { resp: UserMessageResponse =>
+      renderResponse(resp)
     }
   }
 
-  private val indexCommandTriggers = Seq('index, 'привет, 'гарсон)
-  onCommandWithHelp(indexCommandTriggers: _*)("Показать список категорий/товаров") { implicit msg =>
-    askBot(Index(None, msg)) {
-      renderResponse(_: IndexResponse)
-    }
+  onCommandWithHelp('start, 'привет)("Начать общение") { implicit msg =>
+    reply(s"Рад вас видеть! У нас самое вкусное пиво! Наберите слово 'Меню' для начала работы")
   }
 
   override def helpHeader(): String =

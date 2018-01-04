@@ -5,7 +5,10 @@ import ru.hopcone.bot.models.Tables._
 import slick.jdbc.PostgresProfile.api._
 
 object OrderDataDAO extends AbstractDAO[OrderDataRow] {
-  private val insertOrderStmt = OrderData returning OrderData.map(_.orderId) into ((item, orderId) => item.copy(orderId = orderId))
+  private val InsertOrderStmt = OrderData returning OrderData.map(_.orderId) into ((item, orderId) => item.copy(orderId = orderId))
+
+  def findLastNewOrder(userId: Int)(implicit db: DatabaseManager): Option[OrderDataRow] =
+    run(OrderData.filter(o => o.userId === userId && o.status === "new").result).headOption
 
   def update(order: OrderDataRow)(implicit db: DatabaseManager): OrderDataRow = {
     run(OrderData.filter(_.orderId === order.orderId).update(order))
@@ -22,6 +25,6 @@ object OrderDataDAO extends AbstractDAO[OrderDataRow] {
 
   def insert(orderData: OrderDataRow)
             (implicit db: DatabaseManager): OrderDataRow = {
-    run(insertOrderStmt += orderData)
+    run(InsertOrderStmt += orderData)
   }
 }

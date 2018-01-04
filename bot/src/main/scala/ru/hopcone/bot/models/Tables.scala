@@ -222,21 +222,21 @@ trait Tables {
     * @param id             Database column id SqlType(serial), AutoInc, PrimaryKey
     * @param name           Database column name SqlType(varchar), Length(100,true)
     * @param telegramUserId Database column telegram_user_id SqlType(int4) */
-  case class UserInfoRow(id: Int, name: String, telegramUserId: Int)
+  case class UserInfoRow(id: Int, name: String, telegramUserId: Int, telegramUserName: String)
 
   /** GetResult implicit for fetching UserInfoRow objects using plain SQL queries */
   implicit def GetResultUserInfoRow(implicit e0: GR[Int], e1: GR[String]): GR[UserInfoRow] = GR {
     prs =>
       import prs._
-      UserInfoRow.tupled((<<[Int], <<[String], <<[Int]))
+      UserInfoRow.tupled((<<[Int], <<[String], <<[Int], <<[String]))
   }
 
   /** Table description of table user_info. Objects of this class serve as prototypes for rows in queries. */
   class UserInfo(_tableTag: Tag) extends profile.api.Table[UserInfoRow](_tableTag, "user_info") {
-    def * = (id, name, telegramUserId) <> (UserInfoRow.tupled, UserInfoRow.unapply)
+    def * = (id, name, telegramUserId, telegramUserName) <> (UserInfoRow.tupled, UserInfoRow.unapply)
 
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (Rep.Some(id), Rep.Some(name), Rep.Some(telegramUserId)).shaped.<>({ r => import r._; _1.map(_ => UserInfoRow.tupled((_1.get, _2.get, _3.get))) }, (_: Any) => throw new Exception("Inserting into ? projection not supported."))
+    def ? = (Rep.Some(id), Rep.Some(name), Rep.Some(telegramUserId), Rep.Some(telegramUserName)).shaped.<>({ r => import r._; _1.map(_ => UserInfoRow.tupled((_1.get, _2.get, _3.get, _4.get))) }, (_: Any) => throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(serial), AutoInc, PrimaryKey */
     val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
@@ -244,6 +244,8 @@ trait Tables {
     val name: Rep[String] = column[String]("name", O.Length(100, varying = true))
     /** Database column telegram_user_id SqlType(int4) */
     val telegramUserId: Rep[Int] = column[Int]("telegram_user_id")
+    /** Database column name SqlType(varchar) */
+    val telegramUserName: Rep[String] = column[String]("telegram_user_name")
 
     /** Uniqueness Index over (name,telegramUserId) (database name user_info_name_telegram_user_id_key) */
     val index1 = index("user_info_name_telegram_user_id_key", (name, telegramUserId), unique = true)

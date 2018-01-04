@@ -57,7 +57,8 @@ class UserActorSpec extends TestKit(ActorSystem("MySpec"))
 
   private def expectDialog(expectations: Seq[(String, String)], finished: Boolean = true)
                           (implicit pos: Position): Unit = {
-    implicit lazy val userActor: DialogActor = DialogActor(system.actorOf(UserActor.props(user, database)))
+
+    implicit lazy val userActor: DialogActor = DialogActor(system.actorOf(UserActor.props(user, database, notificator)))
     expectations.foreach {
       case (msg, resp) => expectResponse(msg, resp)
     }

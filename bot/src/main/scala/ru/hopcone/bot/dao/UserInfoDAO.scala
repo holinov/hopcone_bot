@@ -26,6 +26,10 @@ object UserInfoDAO extends AbstractDAO[UserInfoRow] {
           (implicit db: DatabaseManager): UserInfoRow =
     run(UserInfo.filter(_.id === id).result).head
 
+  def loadByTgId(id: Int)
+                (implicit db: DatabaseManager): UserInfoRow =
+    run(UserInfo.filter(_.telegramUserId === id).result).head
+
   def userAddresses(userId: Int)
                    (implicit db: DatabaseManager): Seq[DeliveryAddressRow] =
     run(DeliveryAddress.filter(_.userId === userId).result)

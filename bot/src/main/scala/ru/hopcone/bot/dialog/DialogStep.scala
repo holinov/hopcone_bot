@@ -1,8 +1,10 @@
 package ru.hopcone.bot.dialog
 
 import com.typesafe.scalalogging.LazyLogging
+import org.json4s.jackson.Serialization._
+import ru.hopcone.bot.DefaultImplicits
 
-trait DialogStep extends LazyLogging {
+trait DialogStep extends LazyLogging with DefaultImplicits {
 
   def stepText: String
 
@@ -22,4 +24,6 @@ trait DialogStep extends LazyLogging {
     }
     else None
   }
+
+  def pp(v: AnyRef): String = writePretty(v)
 }
