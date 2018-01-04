@@ -9,6 +9,8 @@ import ru.hopcone.bot.{AdminApi, models}
 
 case class DialogStepContext(user: UserSession, private var ord: Option[OrderDataRow] = None)
                             (implicit database: DatabaseManager, notificator: AdminApi) {
+  def isAdmin: Boolean = notificator.isAdmin(userId)
+
   def confirmOrder(): OrderDataRow = {
     val confirmed = OrderDataDAO.setStatus(ord.get, "confirmed")
     clearOrder()

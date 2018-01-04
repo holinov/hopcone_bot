@@ -4,9 +4,11 @@ import ru.hopcone.bot.dao.{CategoriesDAO, ProductsDAO}
 import ru.hopcone.bot.models.Tables._
 import ru.hopcone.bot.models.{DatabaseManager, DialogStepContext}
 
-case class CategoryListStep(categories: Seq[ShopCategoryRow], prevStep: DialogStep)
+case class CategoryListStep(categories: Seq[ShopCategoryRow], prevStepFactory: () => DialogStep)
                            (implicit database: DatabaseManager, override val ctx: DialogStepContext)
   extends StepWithBack {
+
+
   logger.debug(s"CategoryListStep from $categories")
 
   override def stepText: String = "Что вас интересует?"
@@ -25,7 +27,7 @@ case class CategoryListStep(categories: Seq[ShopCategoryRow], prevStep: DialogSt
           logger.debug(s"Subcats: $subcats")
           if (subcats.nonEmpty) {
             logger.debug(s"Found subcategories $subcats")
-            CategoryListStep(subcats, this)
+            CategoryListStep(subcats, () => this)
           } else {
             val categoryItems = ProductsDAO.productsInCategory(cat)
             logger.debug(s"Found $cat.\nContains items: [${categoryItems.mkString(",")}]")
@@ -37,4 +39,6 @@ case class CategoryListStep(categories: Seq[ShopCategoryRow], prevStep: DialogSt
       logger.warn(s"Trying to look ant unknown catagory '$unknownCat'")
       this
   }
+
+  override def prevStep: DialogStep = prevStepFactory()
 }

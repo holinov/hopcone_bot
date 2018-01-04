@@ -1,24 +1,18 @@
 package ru.hopcone.bot
 
-import java.io
-import java.util.concurrent.Executors
-
-import akka.dispatch.ExecutionContexts
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
 import info.mukel.telegrambot4s.methods.{GetFile, ParseMode, SendMessage}
 import info.mukel.telegrambot4s.models.File
 
-import scala.concurrent.{ExecutionContextExecutorService, Future}
+import scala.concurrent.Future
 
+class AdminApi(config: Config, bot: Bot) extends LazyLogging with AsyncExecutionPoint {
 
-class AdminApi(config: Config, bot: Bot) extends LazyLogging {
 
   import FileUtils._
 
   import scala.collection.JavaConverters._
-
-  private implicit val ex: ExecutionContextExecutorService = ExecutionContexts.fromExecutorService(Executors.newCachedThreadPool())
 
   private val adminUsers = config.getLongList("hopcone.bot.admins").asScala.toSet
   private val adminChannel = config.getString("hopcone.bot.channel")
@@ -26,7 +20,7 @@ class AdminApi(config: Config, bot: Bot) extends LazyLogging {
   ensureDir(downloadDir)
 
   def notifyUser(userId: Long, notification: String): Unit =
-    bot.request(SendMessage(userId, notification, parseMode = Some(ParseMode.Markdown)))
+    bot.request(SendMessage(userId, s">>\n$notification\n>>", parseMode = Some(ParseMode.Markdown)))
 
   def notifyByLogin(login: String, notification: String): Unit =
     bot.request(SendMessage(login, notification, parseMode = Some(ParseMode.Markdown)))
@@ -36,16 +30,18 @@ class AdminApi(config: Config, bot: Bot) extends LazyLogging {
     notifyByLogin(adminChannel, notification)
   }
 
-  def receiveFile(fileId: String, saveAs: String): Future[io.File] = {
+  def receiveFile(fileId: String, saveAs: String): Future[String] = {
     bot.request(GetFile(fileId)) map { file =>
       val url = fileUrl(file)
       logger.info(s"Downloading file $file from $url")
       val fileName = s"$downloadDir/$saveAs"
       downloadFileOld(url, fileName)
       logger.info(s"Downloading file $file complete to $fileName")
-      new io.File(fileName)
+      fileName
     }
   }
+
+  def isAdmin(userId: Int): Boolean = adminUsers.contains(userId.toLong)
 
   private def fileUrl(file: File) = s"https://api.telegram.org/file/bot${bot.token}/${file.filePath.get}"
 }

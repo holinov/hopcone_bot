@@ -18,7 +18,7 @@ trait DialogStep extends LazyLogging with DefaultImplicits {
 
   def next(input: String): Option[DialogStep] = {
     if (transitions.isDefinedAt(input)) {
-      val res = Some(transitions(input))
+      val res = Option(transitions(input))
       logger.debug(s"Searching transition for $input. Found $res")
       res
     }

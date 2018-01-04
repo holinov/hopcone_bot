@@ -36,6 +36,9 @@ lazy val commonSettings = Seq(
     "com.typesafe.akka" %% "akka-stream" % akkaVersion,
     "com.typesafe.akka" %% "akka-http" % akkaHttpVersion excludeAll ExclusionRule("com.typesafe.akka", "akka-stream"),
 
+    //CSW
+    "com.github.melrief" %% "purecsv" % "0.1.1",
+
     // TESTS
     "com.typesafe.akka" %% "akka-testkit" % akkaVersion,
     "org.scalatest" %% "scalatest" % "3.0.4" % Test

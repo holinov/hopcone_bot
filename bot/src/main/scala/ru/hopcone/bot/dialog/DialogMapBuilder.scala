@@ -8,8 +8,6 @@ class DialogMapBuilder(implicit db: DatabaseManager, ctx: DialogStepContext) {
   import DialogMapBuilder._
 
   // DON'T REMOVE TYPES BECAUSE OF RECURSIVE LAZY VALS
-  private lazy val userMenuStep: CategoryListStep = CategoryListStep(CategoriesDAO.rootCategories(), rootStep)
-  private lazy val accountInfoStep: DialogStep = AccountInfoStep(rootStep)
 
   val rootStep = BasicDialogStep(MainMenuTitle,
     Seq(MenuButton, AccountInfoButton),
@@ -18,6 +16,10 @@ class DialogMapBuilder(implicit db: DatabaseManager, ctx: DialogStepContext) {
       AccountInfoButton -> accountInfoStep
     )
   )
+
+  lazy val userMenuStep: CategoryListStep = CategoryListStep(CategoriesDAO.rootCategories(), () => rootStep)
+  lazy val accountInfoStep: DialogStep = AccountInfoStep(rootStep)
+
 
   def build: DialogMap = DialogMap(rootStep)
 }

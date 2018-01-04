@@ -30,7 +30,7 @@ case class ShowCartStep(prevStep: DialogStep)
 
   override protected def onTransition: PartialFunction[String, DialogStep] = {
     case CheckoutButton => SelectAddressStep(prevStep)
-    case ContinueShopping => CategoryListStep(CategoriesDAO.rootCategories(), MainMenu)
+    case ContinueShopping => CategoryListStep(CategoriesDAO.rootCategories(), () => MainMenu)
     case CancelOrderButton =>
       ctx.clearOrder()
       prevStep
