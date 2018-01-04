@@ -15,6 +15,7 @@ class UserActorSpec extends TestKit(ActorSystem("MySpec"))
   with DBBasedSpecLike
   with Matchers
   with BeforeAndAfterAll {
+
   override def afterAll() {
     TestKit.shutdownActorSystem(system)
   }

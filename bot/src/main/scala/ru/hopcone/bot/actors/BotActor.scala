@@ -21,7 +21,11 @@ class BotActor(override val db: DatabaseManager, val notificator: Notificator) e
       route(user.id, r)
   }
 
-  override def createChild(id: Int): ActorRef = super.createChild(users(id), notificator)
+  override def createChild(id: Int): ActorRef = {
+    val user = users(id)
+    logger.debug(s"Create Actor for user $user")
+    super.createChild(user, notificator)
+  }
 }
 
 object BotActor {

@@ -1,8 +1,8 @@
 package ru.hopcone.bot.dialog
 
 class DialogProcessor(dialogMap: DialogMap) {
-  private var currentStep: DialogStep = dialogMap.rootStep
 
+  private var currentStep: DialogStep = dialogMap.rootStep
 
   def step:DialogStep = currentStep
 

@@ -7,5 +7,5 @@ import ru.hopcone.bot.DefaultImplicits
 
 abstract class BasicActor extends Actor with LazyLogging with DefaultImplicits {
   //def pp(v: AnyRef) = writePretty(v)
-  def pp(v: AnyRef) = write(v)
+  def pp(v: AnyRef): String = write(v)
 }

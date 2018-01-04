@@ -26,7 +26,6 @@ class UserActor(user: TUser, implicit val db: DatabaseManager, implicit val noti
       txt.foreach { input =>
         try {
           val transitionResult = dialogProcessor.processInput(input)
-          logger.debug(s"TransitionResult: ${transitionResult}")
           val nextStep = transitionResult.nextStep
           val title = nextStep.stepText
           val buttons = nextStep.getButtons
