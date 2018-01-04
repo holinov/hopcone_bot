@@ -5,7 +5,7 @@
             <fileNamePattern>log/ROOT-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxFileSize>100MB</maxFileSize>
             <maxHistory>60</maxHistory>
-            <totalSizeCap>20GB</totalSizeCap>
+            <totalSizeCap>2GB</totalSizeCap>
         </rollingPolicy>
         <encoder>
             <pattern>%d{ISO8601} %-5level %logger - %msg%n</pattern>

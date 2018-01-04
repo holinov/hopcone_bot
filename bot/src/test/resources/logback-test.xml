@@ -6,7 +6,7 @@
         </encoder>
     </appender>
 
-    <logger name="ru.hopcone.bot" level="DEBUG"/>
+    <logger name="ru.hopcone.bot" level="INFO"/>
 
     <root level="WARN">
         <appender-ref ref="STDOUT"/>

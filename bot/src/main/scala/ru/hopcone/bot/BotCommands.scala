@@ -30,7 +30,7 @@ object BotCommands extends DefaultImplicits {
 
   case class UserMessage(message: Message) extends BotCommand
 
-  case class UserMessageResponse(title: String, buttons: Seq[String], request: UserMessage) //TODO ?????
+  case class UserMessageResponse(title: String, buttons: Seq[String], request: UserMessage)
     extends BotResponse[UserMessage]
   {
     override def text: Option[String] = title
