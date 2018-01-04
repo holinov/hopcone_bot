@@ -1,10 +1,9 @@
 package ru.hopcone.bot.dialog.cart
 
-import ru.hopcone.bot.data.dao.OrderItemDAO
-import ru.hopcone.bot.data.models.{DatabaseManager, DialogStepContext}
-import ru.hopcone.bot.dialog.StepWithBack
+import ru.hopcone.bot.dao.OrderItemDAO
 import ru.hopcone.bot.dialog.cart.AddToCartStep.RemoveButton
-import ru.hopcone.bot.models.Tables
+import ru.hopcone.bot.dialog.{DialogStep, StepWithBack}
+import ru.hopcone.bot.models.{DatabaseManager, DialogStepContext, Tables}
 
 case class RemoveItemFromCartStep(item: Tables.ShopItemRow, prevStep: AddToCartStep)
                                  (implicit database: DatabaseManager, ctx: DialogStepContext)

@@ -47,12 +47,14 @@ class DialogMapSpec extends DBBasedSpec {
 
   describe("DialogProcessor") {
     val builder = new DialogMapBuilder
-    val processor = new DialogProcessor(DialogMap(builder.rootStep))
+    val processor = new DialogProcessor(builder.build)
     it("should navigate from root menu to product") {
       val res1 = processor.processInput(MenuButton) //MENU
       val res2 = processor.processInput(res1.nextStep.buttons.head) //BEER
       val res3 = processor.processInput(res2.nextStep.buttons.head) //IPA
 
+
+      println(res3.nextStep)
       res3.nextStep.buttons should contain("BEER 1")
       res3.nextStep.buttons should contain("BEER 2")
       res3.nextStep.buttons should contain("BEER 3")

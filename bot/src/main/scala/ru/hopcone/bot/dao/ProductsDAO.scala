@@ -1,7 +1,7 @@
-package ru.hopcone.bot.data.dao
+package ru.hopcone.bot.dao
 
-//import ru.hopcone.bot.data.models.DB.Tables.ShopItems
-import ru.hopcone.bot.data.models.DatabaseManager
+//import ru.hopcone.bot.models.DB.Tables.ShopItems
+import ru.hopcone.bot.models.DatabaseManager
 import ru.hopcone.bot.models.Tables._
 import slick.jdbc.PostgresProfile.api._
 

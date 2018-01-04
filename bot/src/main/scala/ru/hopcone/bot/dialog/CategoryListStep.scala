@@ -1,14 +1,13 @@
 package ru.hopcone.bot.dialog
 
-import ru.hopcone.bot.data.dao.{CategoriesDAO, ProductsDAO}
-import ru.hopcone.bot.data.models.{DatabaseManager, DialogStepContext}
-import ru.hopcone.bot.dialog.cart.DialogStep
+import ru.hopcone.bot.dao.{CategoriesDAO, ProductsDAO}
 import ru.hopcone.bot.models.Tables._
+import ru.hopcone.bot.models.{DatabaseManager, DialogStepContext}
 
 case class CategoryListStep(categories: Seq[ShopCategoryRow], prevStep: DialogStep)
                            (implicit database: DatabaseManager, override val ctx: DialogStepContext)
   extends StepWithBack {
-  logger.debug(s"CategoryListStep fro $categories")
+  logger.debug(s"CategoryListStep from $categories")
 
   override def stepText: String = "Что вас интересует?"
 
@@ -23,6 +22,7 @@ case class CategoryListStep(categories: Seq[ShopCategoryRow], prevStep: DialogSt
         case Some(cat) =>
           logger.debug(s"Searching for ${cat.id} ${cat.name}. \nCATS $categories")
           val subcats = CategoriesDAO.childCategories(cat)
+          logger.debug(s"Subcats: $subcats")
           if (subcats.nonEmpty) {
             logger.debug(s"Found subcategories $subcats")
             CategoryListStep(subcats, this)
@@ -32,5 +32,9 @@ case class CategoryListStep(categories: Seq[ShopCategoryRow], prevStep: DialogSt
             CategoryProductListStep(cat, categoryItems, this)
           }
       }
+
+    case unknownCat =>
+      logger.warn(s"Trying to look ant unknown catagory '$unknownCat'")
+      this
   }
 }

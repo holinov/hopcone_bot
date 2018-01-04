@@ -1,6 +1,6 @@
 package ru.hopcone.bot
 
-import ru.hopcone.bot.data.dao.{OrderItemDAO, ProductsDAO}
+import ru.hopcone.bot.dao.{OrderItemDAO, ProductsDAO}
 import ru.hopcone.bot.models.Tables._
 import ru.hopcone.bot.support.DBBasedSpec
 

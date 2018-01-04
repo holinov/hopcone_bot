@@ -1,5 +1,3 @@
-
-
 val json4sVersion = "3.5.3"
 val slickVersion = "3.2.1"
 val akkaVersion = "2.5.8"
@@ -44,14 +42,14 @@ lazy val commonSettings = Seq(
   )
 )
 
-
-
-lazy val utils = (project in file("utils"))
-  .settings(commonSettings: _*)
-  //.settings(slickCodeGen := slickCodeGenTask.value)
-  //.settings(sourceGenerators in Compile += slickCodeGen.taskValue) // register automatic code generation on every compile, remove for only manual use)
-  .settings(managedSourceDirectories in Compile += sourceManaged.value / "ru" / "hopcone" / "bot" / "models")
-//.settings()
+//
+//
+//lazy val utils = (project in file("utils"))
+//  .settings(commonSettings: _*)
+//  //.settings(slickCodeGen := slickCodeGenTask.value)
+//  //.settings(sourceGenerators in Compile += slickCodeGen.taskValue) // register automatic code generation on every compile, remove for only manual use)
+//  .settings(managedSourceDirectories in Compile += sourceManaged.value / "ru" / "hopcone" / "bot" / "models")
+////.settings()
 
 
 lazy val bot = (project in file("bot"))
@@ -65,9 +63,9 @@ lazy val bot = (project in file("bot"))
       "org.json4s" %% "json4s-ext" % json4sVersion,
     )
   )
-  .aggregate(utils).dependsOn(utils)
+  .settings(managedSourceDirectories in Compile += sourceManaged.value / "ru" / "hopcone" / "bot" / "models")
+//.aggregate(utils).dependsOn(utils)
 
-lazy val config = ConfigFactory.parseFile(new File("../bot/application.conf"))
 lazy val slickCodeGen = taskKey[Seq[File]]("slick-codegen")
 
 

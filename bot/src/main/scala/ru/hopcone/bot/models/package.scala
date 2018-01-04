@@ -1,4 +1,4 @@
-package ru.hopcone.bot.data
+package ru.hopcone.bot
 
 import slick.jdbc.PostgresProfile
 

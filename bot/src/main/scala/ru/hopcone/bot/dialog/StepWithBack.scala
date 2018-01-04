@@ -1,7 +1,5 @@
 package ru.hopcone.bot.dialog
 
-import ru.hopcone.bot.dialog.cart.{DialogStep, DialogStepBase}
-
 trait StepWithBack extends DialogStepBase {
   def prevStep: DialogStep
 

@@ -1,7 +1,6 @@
 package ru.hopcone.bot.dialog
 
-import ru.hopcone.bot.data.models.{DatabaseManager, DialogStepContext}
-import ru.hopcone.bot.dialog.cart.DialogStep
+import ru.hopcone.bot.models.{DatabaseManager, DialogStepContext}
 
 case class AccountInfoStep(prevStep: DialogStep)
                           (implicit database: DatabaseManager, ctx: DialogStepContext)

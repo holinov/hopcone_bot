@@ -1,6 +1,5 @@
-package ru.hopcone.bot.data.models
+package ru.hopcone.bot.models
 
-import ru.hopcone.bot.models.Tables
 import ru.hopcone.bot.models.Tables._
 import slick.jdbc.PostgresProfile.api._
 
@@ -10,8 +9,8 @@ import scala.concurrent.{Await, Future}
 object DB {
   protected val MaxTimeout: Duration = 10.seconds
 
-  def drop(db: DatabaseManager) = {
-    Await.ready(db.run(Tables.schema.truncate), MaxTimeout)
+  def drop(db: DatabaseManager): Future[Unit] = {
+    Await.ready(db.run(Tables.schema.drop), MaxTimeout)
   }
 
   def initialize(db: DatabaseManager): Future[Unit] = {

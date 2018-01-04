@@ -1,8 +1,7 @@
 package ru.hopcone.bot.dialog
 
-import ru.hopcone.bot.data.dao.CategoriesDAO
-import ru.hopcone.bot.data.models.{DatabaseManager, DialogStepContext}
-import ru.hopcone.bot.dialog.cart.DialogStep
+import ru.hopcone.bot.dao.CategoriesDAO
+import ru.hopcone.bot.models.{DatabaseManager, DialogStepContext}
 
 class DialogMapBuilder(implicit db: DatabaseManager, ctx: DialogStepContext) {
 
@@ -23,4 +22,6 @@ class DialogMapBuilder(implicit db: DatabaseManager, ctx: DialogStepContext) {
   def build: DialogMap = DialogMap(rootStep)
 }
 
-object DialogMapBuilder extends DialogButtons
+object DialogMapBuilder extends DialogButtons {
+  def apply()(implicit db: DatabaseManager, ctx: DialogStepContext): DialogMap = new DialogMapBuilder().build
+}

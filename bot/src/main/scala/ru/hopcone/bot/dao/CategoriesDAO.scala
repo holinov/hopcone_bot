@@ -1,8 +1,7 @@
-package ru.hopcone.bot.data.dao
+package ru.hopcone.bot.dao
 
-import ru.hopcone.bot.data.models.DatabaseManager
-import ru.hopcone.bot.models.Tables
 import ru.hopcone.bot.models.Tables._
+import ru.hopcone.bot.models.{DatabaseManager, Tables}
 import slick.jdbc.PostgresProfile.api._
 
 object CategoriesDAO extends AbstractDAO[ShopCategoryRow] {

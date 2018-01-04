@@ -1,7 +1,5 @@
 package ru.hopcone.bot.dialog
 
-import ru.hopcone.bot.dialog.cart.DialogStep
-
 class DialogProcessor(dialogMap: DialogMap) {
   private var currentStep: DialogStep = dialogMap.rootStep
 

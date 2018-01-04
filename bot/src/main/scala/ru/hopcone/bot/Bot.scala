@@ -10,7 +10,7 @@ import info.mukel.telegrambot4s.models._
 import org.json4s.jackson.Serialization._
 import ru.hopcone.bot.BotCommands._
 import ru.hopcone.bot.actors.BotActor
-import ru.hopcone.bot.data.models._
+import ru.hopcone.bot.models.DatabaseManager
 import ru.hopcone.bot.render._
 
 import scala.concurrent.Future

@@ -2,7 +2,7 @@ package ru.hopcone.bot
 
 import com.typesafe.config.ConfigFactory
 import com.typesafe.scalalogging.LazyLogging
-import ru.hopcone.bot.data.models.DB
+import ru.hopcone.bot.models.DB
 
 object Main extends LazyLogging {
   def main(args: Array[String]): Unit = {
@@ -13,6 +13,7 @@ object Main extends LazyLogging {
     logger.info(s"Starting with config $config")
 
     val db = DB.database("hopcone_database")
+    DB.drop(db)
 
     try {
       val bot = new Bot(config, db)

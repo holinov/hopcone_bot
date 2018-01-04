@@ -3,8 +3,9 @@ package ru.hopcone.bot.support
 import com.typesafe.config.{Config, ConfigFactory}
 import info.mukel.telegrambot4s.models.User
 import org.scalatest.{BeforeAndAfterAll, FunSpecLike, Matchers}
-import ru.hopcone.bot.data.models.{DB, DatabaseManager, DialogStepContext}
-import ru.hopcone.bot.data.state.UserSession
+import ru.hopcone.bot.dialog.{DialogMap, DialogMapBuilder}
+import ru.hopcone.bot.models.{DB, DatabaseManager, DialogStepContext}
+import ru.hopcone.bot.state.UserSession
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
@@ -15,8 +16,9 @@ trait BaseSpecLike extends FunSpecLike with Matchers with BeforeAndAfterAll {
   val user: User = User(-1999, isBot = false, "test", Some("user"), Some("test_user"), Some("RU"))
 
   implicit lazy val userSession: UserSession = UserSession(user)
-  implicit lazy val database: DatabaseManager = DB.database(dbName)
   implicit lazy val ctx: DialogStepContext = DialogStepContext(userSession)
+  implicit lazy val dialogMap: DialogMap = DialogMapBuilder()
+  implicit lazy val database: DatabaseManager = DB.database(dbName)
 
 
   override protected def beforeAll(): Unit = {

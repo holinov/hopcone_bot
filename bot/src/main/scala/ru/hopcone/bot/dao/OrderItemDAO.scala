@@ -1,12 +1,11 @@
-package ru.hopcone.bot.data.dao
+package ru.hopcone.bot.dao
 
 import java.sql.Timestamp
 
 import ru.hopcone.bot
-import ru.hopcone.bot.data.models.{DatabaseManager, DialogStepContext}
 import ru.hopcone.bot.models
-import ru.hopcone.bot.models.Tables
 import ru.hopcone.bot.models.Tables._
+import ru.hopcone.bot.models.{DatabaseManager, DialogStepContext, Tables}
 import slick.jdbc.PostgresProfile.api._
 
 

@@ -2,7 +2,7 @@ package ru.hopcone.bot.actors
 
 import akka.actor.{Actor, ActorRef}
 import info.mukel.telegrambot4s.models.User
-import ru.hopcone.bot.data.models.DatabaseManager
+import ru.hopcone.bot.models.DatabaseManager
 
 trait UserRouter extends Router {
   self: Actor =>

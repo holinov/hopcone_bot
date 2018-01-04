@@ -9,7 +9,6 @@ import scala.language.implicitConversions
 package object render extends DefaultImplicits with LazyLogging {
   implicit def render(r: UserMessageResponse): BotResponseRenderer[UserMessageResponse] = {
     new BotResponseRenderer[UserMessageResponse] {
-      //logger.debug(s"Responding with ${r}\n${r.text}\t${r.buttons}")
       override def text: String = r.text.get
 
       override def keyboardMarkup: Option[ReplyKeyboardMarkup] = {
@@ -18,7 +17,7 @@ package object render extends DefaultImplicits with LazyLogging {
         ReplyKeyboardMarkup.singleColumn(buttons)
       }
 
-      override def replyToMsgId: Option[Int] = r.request.message.messageId
+      //override def replyToMsgId: Option[Int] = r.request.message.messageId
     }
   }
 

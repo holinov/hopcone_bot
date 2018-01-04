@@ -1,8 +1,8 @@
-package ru.hopcone.bot.data.dao
+package ru.hopcone.bot.dao
 
-//import ru.hopcone.bot.data.dao.ProductsDAO.MaxTimeout
+//import ru.hopcone.bot.dao.ProductsDAO.MaxTimeout
 import com.typesafe.scalalogging.LazyLogging
-import ru.hopcone.bot.data.models
+import ru.hopcone.bot.models
 import slick.dbio.{DBIOAction, NoStream}
 
 import scala.concurrent.Await

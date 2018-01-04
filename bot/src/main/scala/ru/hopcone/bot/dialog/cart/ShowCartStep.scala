@@ -1,8 +1,9 @@
 package ru.hopcone.bot.dialog.cart
 
-import ru.hopcone.bot.data.dao.{OrderItemDAO, ProductsDAO}
-import ru.hopcone.bot.data.models.{DatabaseManager, DialogStepContext}
-import ru.hopcone.bot.dialog.StepWithBack
+
+import ru.hopcone.bot.dao.{CategoriesDAO, OrderItemDAO, ProductsDAO}
+import ru.hopcone.bot.dialog.{CategoryListStep, DialogMapBuilder, DialogStep, StepWithBack}
+import ru.hopcone.bot.models.{DatabaseManager, DialogStepContext}
 
 case class ShowCartStep(prevStep: DialogStep)
                        (implicit database: DatabaseManager, ctx: DialogStepContext)
@@ -13,8 +14,8 @@ case class ShowCartStep(prevStep: DialogStep)
   override def stepText: String = {
     logger.debug("Rendering shopping cart")
     val order = ensureOrder
-    val sb = StringBuilder.newBuilder.append("Вы заказали:\n")
     val items = OrderItemDAO.items(order)
+    val sb = StringBuilder.newBuilder.append("Вы заказали:\n")
     items.zipWithIndex.map {
       case (cartItem, idx) =>
         sb.append(idx + 1).append(s"] ${ProductsDAO.productName(cartItem.itemId)} ${cartItem.amount} л.\n")
@@ -22,24 +23,16 @@ case class ShowCartStep(prevStep: DialogStep)
     sb.toString()
   }
 
-  override def buttons: Seq[String] = Seq(CheckoutButton, CancelOrderButton)
+  private lazy val Root: DialogStep = DialogMapBuilder().rootStep
+  private lazy val MainMenu = Root.next(MenuButton).get
+
+  override def buttons: Seq[String] = Seq(ContinueShopping, CheckoutButton, CancelOrderButton)
 
   override protected def onTransition: PartialFunction[String, DialogStep] = {
-    case CheckoutButton =>
-      ShowCartStep(prevStep)
+    case CheckoutButton => SelectAddressStep(prevStep)
+    case ContinueShopping => CategoryListStep(CategoriesDAO.rootCategories(), MainMenu)
     case CancelOrderButton =>
       ctx.clearOrder()
       prevStep
   }
-}
-
-case class SelectAddressStep(prevStep: DialogStep)
-                            (implicit database: DatabaseManager, ctx: DialogStepContext)
-  extends StepWithBack with CartChildStep {
-
-  override protected def onTransition: PartialFunction[String, DialogStep] = ???
-
-  override def stepText: String = ???
-
-  override def buttons: Seq[String] = ???
 }

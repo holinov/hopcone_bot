@@ -2,12 +2,13 @@ package ru.hopcone.bot.actors
 
 import akka.actor.{ActorRef, Props}
 import info.mukel.telegrambot4s.models.User
-import ru.hopcone.bot.BotCommands
-import ru.hopcone.bot.data.models
+import ru.hopcone.bot.models.DatabaseManager
+import ru.hopcone.bot.{BotCommands, models}
 
-class BotActor(override val db: models.DatabaseManager) extends BasicActor with UserRouter {
+class BotActor(override val db: DatabaseManager) extends BasicActor with UserRouter {
 
   import BotCommands._
+
   import collection.mutable
 
   private val users = new mutable.HashMap[Int,User]

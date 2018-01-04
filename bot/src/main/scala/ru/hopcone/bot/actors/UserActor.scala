@@ -3,16 +3,16 @@ package ru.hopcone.bot.actors
 import akka.actor.Props
 import info.mukel.telegrambot4s.models.{User => TUser}
 import ru.hopcone.bot.BotCommands.{UserMessage, UserMessageResponse, UserMessageResponseError}
-import ru.hopcone.bot.data.dao.UserInfoDAO
-import ru.hopcone.bot.data.models._
-import ru.hopcone.bot.data.state.UserSession
-import ru.hopcone.bot.dialog.{DialogMapBuilder, DialogProcessor}
+import ru.hopcone.bot.dao.UserInfoDAO
+import ru.hopcone.bot.dialog.{DialogMap, DialogMapBuilder, DialogProcessor}
 import ru.hopcone.bot.models.Tables.UserInfoRow
+import ru.hopcone.bot.models._
+import ru.hopcone.bot.state.UserSession
 
 class UserActor(user: TUser, implicit val db: DatabaseManager) extends BasicActor {
   private implicit val dialogContext: DialogStepContext = DialogStepContext(UserSession(user))
+  private implicit val dialogMap: DialogMap = new DialogMapBuilder().build
 
-  private val dialogMap = new DialogMapBuilder().build
   private val dialogProcessor = new DialogProcessor(dialogMap)
   private var currentDialogStep = dialogProcessor.step
 

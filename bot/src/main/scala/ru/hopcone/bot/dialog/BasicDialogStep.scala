@@ -1,7 +1,6 @@
 package ru.hopcone.bot.dialog
 
-import ru.hopcone.bot.data.models.DialogStepContext
-import ru.hopcone.bot.dialog.cart.DialogStep
+import ru.hopcone.bot.models.DialogStepContext
 
 case class BasicDialogStep(stepText: String, buttons: Seq[String], transitions: Map[String, DialogStep])
                           (implicit ctx: DialogStepContext)

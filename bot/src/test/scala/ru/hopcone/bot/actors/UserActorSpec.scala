@@ -41,7 +41,11 @@ class UserActorSpec extends TestKit(ActorSystem("MySpec"))
           "BEER 2" -> "Добавить в BEER 2 корзину?",
           "Добавить в корзину" -> "Заказать BEER 2",
           "2" -> "Вы заказали:\n1] BEER 2 2.00 л.\n",
-          "Сделать заказ" -> "Вы заказали:\n1] BEER 2 2.00 л.\n"
+          "Сделать заказ" -> "Выберите адрес доставки",
+          "Добавить адресс" -> "Введите адрес доставки",
+          "Адрес 1" -> "Выберите адрес доставки",
+          "Адрес 1" -> "Вы заказали:\n1] BEER 2 2.00 л.\nДоставка по адресу:\nАдрес 1",
+          "Подтвердить заказ" -> "Заказ подтвержден\nГлавное меню"
         )
       }
     }
@@ -65,7 +69,7 @@ class UserActorSpec extends TestKit(ActorSystem("MySpec"))
   private def expectResponse(msg: String, resp: String)
                             (implicit userActor: DialogActor, pos: Position): Unit = {
     userActor.actorRef ! UserMessage(Message(1, Some(user), 0, null, text = Some(msg)))
-    expectMsgPF() {
+    expectMsgPF(hint = resp) {
       case UserMessageResponse(respMsg, _, _) if respMsg == resp =>
       case UserMessageResponseError(error, _) => fail(s"For message $msg\nexpected: $resp", error)
     }
