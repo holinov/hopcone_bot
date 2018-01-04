@@ -16,6 +16,7 @@ object UserInfoDAO extends AbstractDAO[UserInfoRow] {
   def touchUser(user: UserInfoRow)
                (implicit db: DatabaseManager): Int =
     try {
+      //TODO: update record if nickname changed
       run(UserInfo += user)
     } catch {
       case _: PSQLException => 0

@@ -3,9 +3,9 @@ package ru.hopcone.bot.actors
 import akka.actor.{ActorRef, Props}
 import info.mukel.telegrambot4s.models.User
 import ru.hopcone.bot.models.DatabaseManager
-import ru.hopcone.bot.{BotCommands, Notificator, models}
+import ru.hopcone.bot.{AdminApi, BotCommands, models}
 
-class BotActor(override val db: DatabaseManager, val notificator: Notificator) extends BasicActor with UserRouter {
+class BotActor(override val db: DatabaseManager, val notificator: AdminApi) extends BasicActor with UserRouter {
 
   import BotCommands._
 
@@ -29,5 +29,5 @@ class BotActor(override val db: DatabaseManager, val notificator: Notificator) e
 }
 
 object BotActor {
-  def props(db: models.DatabaseManager, notificator: Notificator): Props = Props(new BotActor(db, notificator))
+  def props(db: models.DatabaseManager, notificator: AdminApi): Props = Props(new BotActor(db, notificator))
 }

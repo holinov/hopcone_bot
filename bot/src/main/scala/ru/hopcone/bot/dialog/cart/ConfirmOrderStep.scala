@@ -2,6 +2,7 @@ package ru.hopcone.bot.dialog.cart
 
 import ru.hopcone.bot.dao.{DeliveryAddressDAO, OrderItemDAO, ProductsDAO, UserInfoDAO}
 import ru.hopcone.bot.dialog._
+import ru.hopcone.bot.models.Tables.OrderDataRow
 import ru.hopcone.bot.models.{DatabaseManager, DialogStepContext}
 
 case class ConfirmOrderStep(prevStep: DialogStep)
@@ -14,10 +15,10 @@ case class ConfirmOrderStep(prevStep: DialogStep)
   private lazy val order = ctx.order.get
   private lazy val root = new DialogMapBuilder().rootStep
 
-  override def stepText: String = renderOrder("Вы заказали:").toString()
+  override def stepText: String = renderOrder("Вы заказали:", order).toString()
 
 
-  private def renderOrder(title: String) = {
+  private def renderOrder(title: String, order: OrderDataRow) = {
     val items = OrderItemDAO.items(order)
     val sb = StringBuilder.newBuilder.append(title).append("\n")
     items.zipWithIndex.map {
@@ -38,9 +39,9 @@ case class ConfirmOrderStep(prevStep: DialogStep)
     case ConfirmButton =>
       logger.info(s"Confirmed order ${ctx.order.get}")
       val confirmed = ctx.confirmOrder()
-      val orderBuilder = renderOrder("Получен заказ:")
+      val orderBuilder = renderOrder("Получен заказ:\n", confirmed)
       val user = UserInfoDAO.loadByTgId(order.userId)
-      orderBuilder.append(s"\nДля пользователя: @${user.name}")
+      orderBuilder.append(s"\n\n[Для пользователя ${user.name}](tg://user?id=${user.telegramUserId})")
       ctx.notifyAdmins(orderBuilder.toString())
       new DialogStepWithAnswer(root, "Заказ подтвержден")
   }

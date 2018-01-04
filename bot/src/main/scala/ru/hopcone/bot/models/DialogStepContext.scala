@@ -5,10 +5,10 @@ import ru.hopcone.bot
 import ru.hopcone.bot.dao.OrderDataDAO
 import ru.hopcone.bot.models.Tables.OrderDataRow
 import ru.hopcone.bot.state.UserSession
-import ru.hopcone.bot.{Notificator, models}
+import ru.hopcone.bot.{AdminApi, models}
 
 case class DialogStepContext(user: UserSession, private var ord: Option[OrderDataRow] = None)
-                            (implicit database: DatabaseManager, notificator: Notificator) {
+                            (implicit database: DatabaseManager, notificator: AdminApi) {
   def confirmOrder(): OrderDataRow = {
     val confirmed = OrderDataDAO.setStatus(ord.get, "confirmed")
     clearOrder()

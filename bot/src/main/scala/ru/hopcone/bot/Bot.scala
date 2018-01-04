@@ -35,7 +35,7 @@ class Bot(config: Config, db: DatabaseManager) extends TelegramBot
   def connect(): Unit = {
     logger.info("Starting bot")
     run()
-    val notificator = new Notificator(config, this)
+    val notificator = new AdminApi(config, this)
     botActor = system.actorOf(BotActor.props(db, notificator), "hopcone_bot")
     notificator.notify("Bot started")
     logger.info("Bot started")
