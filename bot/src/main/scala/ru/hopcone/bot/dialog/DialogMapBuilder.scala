@@ -18,7 +18,7 @@ class DialogMapBuilder(implicit db: DatabaseManager, ctx: DialogStepContext) {
   )
 
   lazy val userMenuStep: CategoryListStep = CategoryListStep(CategoriesDAO.rootCategories(), () => rootStep)
-  lazy val accountInfoStep: DialogStep = AccountInfoStep(rootStep)
+  lazy val accountInfoStep: DialogStep = AccountInfoStep(() => rootStep)
 
 
   def build: DialogMap = DialogMap(rootStep)

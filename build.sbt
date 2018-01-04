@@ -45,16 +45,6 @@ lazy val commonSettings = Seq(
   )
 )
 
-//
-//
-//lazy val utils = (project in file("utils"))
-//  .settings(commonSettings: _*)
-//  //.settings(slickCodeGen := slickCodeGenTask.value)
-//  //.settings(sourceGenerators in Compile += slickCodeGen.taskValue) // register automatic code generation on every compile, remove for only manual use)
-//  .settings(managedSourceDirectories in Compile += sourceManaged.value / "ru" / "hopcone" / "bot" / "models")
-////.settings()
-
-
 lazy val bot = (project in file("bot"))
   .settings(commonSettings: _*)
   .settings(
@@ -64,35 +54,12 @@ lazy val bot = (project in file("bot"))
       //JSON
       "org.json4s" %% "json4s-jackson" % json4sVersion,
       "org.json4s" %% "json4s-ext" % json4sVersion,
-    )
+    ),
+    test in assembly := {}
   )
   .settings(managedSourceDirectories in Compile += sourceManaged.value / "ru" / "hopcone" / "bot" / "models")
-//.aggregate(utils).dependsOn(utils)
 
 lazy val slickCodeGen = taskKey[Seq[File]]("slick-codegen")
-
-
-////User to autorun code generation
-//lazy val slickCodeGenTask = Def.task {
-//  val cp = (dependencyClasspath in Compile).value
-//  val r = (runner in Compile).value
-//  val s = streams.value
-//
-//
-//  val slickDriver = "slick.jdbc.PostgresProfile"
-//  val jdbcDriver = "org.postgresql.Driver"
-//  val url = "jdbc:postgresql://localhost:5433/hopcone"
-//  val username = "postgres"
-//  val password = "1qaz@WSX"
-//  val pkg = "ru.hopcone.bot.models"
-//  lazy val outputDir = sourceManaged.value
-//  lazy val pkgDir = sourceManaged.value / "ru" / "hopcone" / "bot" / "models"
-//
-//  r.run("slick.codegen.SourceCodeGenerator", cp.files, Array(slickDriver, jdbcDriver, url, outputDir.getPath, pkg, username, password), s.log)
-//  val fname = (pkgDir / "Tables.scala").getPath
-//  Seq(file(fname))
-//}
-
 
 lazy val root = project
   .aggregate(bot)
