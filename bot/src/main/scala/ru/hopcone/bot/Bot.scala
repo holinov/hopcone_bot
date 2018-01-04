@@ -22,6 +22,7 @@ class Bot(config: Config, db: DatabaseManager) extends TelegramBot
   with Commands
   with Messages
   with Help
+  with ChannelPosts
   with DefaultImplicits {
 
   lazy val token: String = scala.util.Properties
@@ -47,6 +48,13 @@ class Bot(config: Config, db: DatabaseManager) extends TelegramBot
     logger.debug(s"$sep\nReceived msg: ${writePretty(msg)}\n$sep")
     askBot(UserMessage(msg)) { resp: UserMessageResponse =>
       renderResponse(resp)
+    }
+  }
+
+  onChannelPost { implicit msg =>
+    logger.debug(s"$sep\nReceived channel msg: ${writePretty(msg)}\n$sep")
+    if (msg.text.isDefined && msg.text.contains("@hopcone_bot tellid")) {
+      reply(s"Channel chat id: ${msg.chat.id}", replyToMessageId = Some(msg.messageId))
     }
   }
 

@@ -10,14 +10,12 @@ case class ConfirmOrderStep(prevStep: DialogStep)
                            (implicit database: DatabaseManager, ctx: DialogStepContext)
   extends StepWithBack {
 
-
   import AddToCartStep._
 
   private lazy val order = ctx.order.get
   private lazy val root = new DialogMapBuilder().rootStep
 
   override def stepText: String = renderOrder("Вы заказали:", order).toString()
-
 
   private def renderOrder(title: String, order: OrderDataRow) = {
     val items = OrderItemDAO.items(order)

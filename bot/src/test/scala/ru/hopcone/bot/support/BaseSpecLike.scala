@@ -17,7 +17,7 @@ trait BaseSpecLike extends FunSpecLike with Matchers with BeforeAndAfterAll {
   val user: User = User(-1999, isBot = false, "test", Some("user"), Some("test_user"), Some("RU"))
 
   implicit lazy val notificator: AdminApi = new AdminApi(config, null) {
-    override def notifyUser(userId: Long, notification: String): Unit = {}
+    override def notifyChatId(userId: Long, notification: String): Unit = {}
 
     override def notify(notification: String): Unit = {}
   }

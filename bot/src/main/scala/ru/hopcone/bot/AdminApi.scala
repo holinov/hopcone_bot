@@ -9,7 +9,6 @@ import scala.concurrent.Future
 
 class AdminApi(config: Config, bot: Bot) extends LazyLogging with AsyncExecutionPoint {
 
-
   import FileUtils._
 
   import scala.collection.JavaConverters._
@@ -19,15 +18,18 @@ class AdminApi(config: Config, bot: Bot) extends LazyLogging with AsyncExecution
   private val downloadDir = config.getString("hopcone.bot.download_dir")
   ensureDir(downloadDir)
 
-  def notifyUser(userId: Long, notification: String): Unit =
+  def notifyChatId(userId: Long, notification: String): Unit =
     bot.request(SendMessage(userId, s">>\n$notification\n>>", parseMode = Some(ParseMode.Markdown)))
 
   def notifyByLogin(login: String, notification: String): Unit =
     bot.request(SendMessage(login, notification, parseMode = Some(ParseMode.Markdown)))
 
   def notify(notification: String): Unit = {
-    adminUsers.foreach(uid => notifyUser(uid, notification))
-    notifyByLogin(adminChannel, notification)
+    adminUsers.foreach(uid => notifyChatId(uid, notification))
+    if (adminChannel.startsWith("@"))
+      notifyByLogin(adminChannel, notification)
+    else
+      notifyChatId(adminChannel.toLong, notification)
   }
 
   def receiveFile(fileId: String, saveAs: String): Future[String] = {
