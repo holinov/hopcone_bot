@@ -1,6 +1,7 @@
 package ru.hopcone.bot.actors
 
 import akka.actor.{Actor, ActorRef}
+import info.mukel.telegrambot4s.models.User
 import ru.hopcone.bot.data.models.DatabaseManager
 
 trait UserRouter extends Router {
@@ -8,6 +9,6 @@ trait UserRouter extends Router {
 
   def db: DatabaseManager
 
-  def createChild(id: Int): ActorRef =
-    context.actorOf(UserActor.props(id, db), s"user_$id")
+  def createChild(tUser: User): ActorRef =
+    context.actorOf(UserActor.props(tUser, db), s"user_${tUser.id}")
 }

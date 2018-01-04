@@ -2,6 +2,7 @@ package ru.hopcone.bot.dialog
 
 import ru.hopcone.bot.data.dao.{CategoriesDAO, ProductsDAO}
 import ru.hopcone.bot.data.models.{DatabaseManager, DialogStepContext}
+import ru.hopcone.bot.dialog.cart.DialogStep
 import ru.hopcone.bot.models.Tables._
 
 case class CategoryListStep(categories: Seq[ShopCategoryRow], prevStep: DialogStep)

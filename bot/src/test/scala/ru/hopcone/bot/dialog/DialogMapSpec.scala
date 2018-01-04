@@ -1,10 +1,10 @@
 package ru.hopcone.bot.dialog
 
 import ru.hopcone.bot.dialog.DialogMapBuilder._
-import ru.hopcone.bot.test.support.DBBased
+import ru.hopcone.bot.support.DBBasedSpec
 
 
-class DialogMapSpec extends DBBased {
+class DialogMapSpec extends DBBasedSpec {
   describe("DialogMap") {
     describe("as data model") {
       it("should describe linear dialog") {
@@ -31,7 +31,7 @@ class DialogMapSpec extends DBBased {
 
     it("should build root categories info") {
       mainTransition shouldNot be(None)
-      mainTransition.foreach(s => s.buttons should have size 3)
+      mainTransition.foreach(s => s.buttons should have size 4)
     }
 
     it(s"should build sub categories from ${catTransition.get.buttons}") {

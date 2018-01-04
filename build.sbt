@@ -30,6 +30,14 @@ lazy val commonSettings = Seq(
     "net.codingwell" %% "scala-guice" % "4.1.1",
     "com.sandinh" %% "akka-guice" % "3.2.0",
 
+    //TELEGRAM API
+    "info.mukel" %% "telegrambot4s" % "3.0.14" excludeAll ExclusionRule("com.typesafe.akka"),
+
+    // AKKA
+    "com.typesafe.akka" %% "akka-actor" % akkaVersion,
+    "com.typesafe.akka" %% "akka-stream" % akkaVersion,
+    "com.typesafe.akka" %% "akka-http" % akkaHttpVersion excludeAll ExclusionRule("com.typesafe.akka", "akka-stream"),
+
     // TESTS
     "org.scalatest" %% "scalatest" % "3.0.4" % Test
   ),
@@ -41,8 +49,8 @@ lazy val commonSettings = Seq(
 
 lazy val utils = (project in file("utils"))
   .settings(commonSettings: _*)
-  .settings(slickCodeGen := slickCodeGenTask.value)
-  .settings(sourceGenerators in Compile += slickCodeGen.taskValue) // register automatic code generation on every compile, remove for only manual use)
+  //.settings(slickCodeGen := slickCodeGenTask.value)
+  //.settings(sourceGenerators in Compile += slickCodeGen.taskValue) // register automatic code generation on every compile, remove for only manual use)
   .settings(managedSourceDirectories in Compile += sourceManaged.value / "ru" / "hopcone" / "bot" / "models")
 //.settings()
 
@@ -56,14 +64,6 @@ lazy val bot = (project in file("bot"))
       //JSON
       "org.json4s" %% "json4s-jackson" % json4sVersion,
       "org.json4s" %% "json4s-ext" % json4sVersion,
-
-      // AKKA
-      "com.typesafe.akka" %% "akka-actor" % akkaVersion,
-      "com.typesafe.akka" %% "akka-stream" % akkaVersion,
-      "com.typesafe.akka" %% "akka-http" % akkaHttpVersion excludeAll ExclusionRule("com.typesafe.akka", "akka-stream"),
-
-      //TELEGRAM API
-      "info.mukel" %% "telegrambot4s" % "3.0.14" excludeAll ExclusionRule("com.typesafe.akka")
     )
   )
   .aggregate(utils).dependsOn(utils)
@@ -71,25 +71,27 @@ lazy val bot = (project in file("bot"))
 lazy val config = ConfigFactory.parseFile(new File("../bot/application.conf"))
 lazy val slickCodeGen = taskKey[Seq[File]]("slick-codegen")
 
-lazy val slickCodeGenTask = Def.task {
-  val cp = (dependencyClasspath in Compile).value
-  val r = (runner in Compile).value
-  val s = streams.value
 
-
-  val slickDriver = "slick.jdbc.PostgresProfile"
-  val jdbcDriver = "org.postgresql.Driver"
-  val url = "jdbc:postgresql://localhost:5433/hopcone"
-  val username = "postgres"
-  val password = "1qaz@WSX"
-  val pkg = "ru.hopcone.bot.models"
-  lazy val outputDir = sourceManaged.value
-  lazy val pkgDir = sourceManaged.value / "ru" / "hopcone" / "bot" / "models"
-
-  r.run("slick.codegen.SourceCodeGenerator", cp.files, Array(slickDriver, jdbcDriver, url, outputDir.getPath, pkg, username, password), s.log)
-  val fname = (pkgDir / "Tables.scala").getPath
-  Seq(file(fname))
-}
+////User to autorun code generation
+//lazy val slickCodeGenTask = Def.task {
+//  val cp = (dependencyClasspath in Compile).value
+//  val r = (runner in Compile).value
+//  val s = streams.value
+//
+//
+//  val slickDriver = "slick.jdbc.PostgresProfile"
+//  val jdbcDriver = "org.postgresql.Driver"
+//  val url = "jdbc:postgresql://localhost:5433/hopcone"
+//  val username = "postgres"
+//  val password = "1qaz@WSX"
+//  val pkg = "ru.hopcone.bot.models"
+//  lazy val outputDir = sourceManaged.value
+//  lazy val pkgDir = sourceManaged.value / "ru" / "hopcone" / "bot" / "models"
+//
+//  r.run("slick.codegen.SourceCodeGenerator", cp.files, Array(slickDriver, jdbcDriver, url, outputDir.getPath, pkg, username, password), s.log)
+//  val fname = (pkgDir / "Tables.scala").getPath
+//  Seq(file(fname))
+//}
 
 
 lazy val root = project

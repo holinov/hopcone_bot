@@ -1,6 +1,7 @@
 package ru.hopcone.bot.dialog
 
 import ru.hopcone.bot.data.models.{DatabaseManager, DialogStepContext}
+import ru.hopcone.bot.dialog.cart.{AddToCartStep, DialogStep}
 import ru.hopcone.bot.models.Tables._
 
 case class CategoryProductListStep(category: ShopCategoryRow, products: Seq[ShopItemRow], prevStep: DialogStep)

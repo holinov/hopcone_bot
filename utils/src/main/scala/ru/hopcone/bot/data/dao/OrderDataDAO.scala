@@ -7,10 +7,6 @@ import slick.jdbc.PostgresProfile.api._
 object OrderDataDAO extends AbstractDAO[OrderDataRow] {
   private val insertOrderStmt = OrderData returning OrderData.map(_.orderId) into ((item, orderId) => item.copy(orderId = orderId))
 
-  //  def insertNewOrder(order: Tables.OrderDataRow):OrderDataRow = {
-  //    run(insertOrderStmt += order)
-  //  }
-
   def insert(orderData: OrderDataRow)(implicit db: DatabaseManager): OrderDataRow = {
     run(insertOrderStmt += orderData)
   }

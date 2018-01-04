@@ -1,11 +1,11 @@
-package ru.hopcone.bot.data.dao
+package ru.hopcone.bot
 
-
+import ru.hopcone.bot.data.dao.{OrderItemDAO, ProductsDAO}
 import ru.hopcone.bot.models.Tables._
-import ru.hopcone.bot.support.BaseSpec
+import ru.hopcone.bot.support.{BaseSpec, DBBasedSpec}
 
 
-class OrderItemDAOSpec extends BaseSpec {
+class OrderItemDAOSpec extends DBBasedSpec {
 
   describe("OrderItemDAO") {
     def newOrder = ctx.updateOrder(OrderItemDAO.ensureOrder)

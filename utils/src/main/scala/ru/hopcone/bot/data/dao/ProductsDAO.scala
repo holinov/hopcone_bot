@@ -15,9 +15,9 @@ object ProductsDAO extends AbstractDAO[ShopItemRow] {
     run(ShopItem.filter(_.categoryId === cat.id).result)
   }
 
-  private def nextIdx(implicit db: DatabaseManager) = Random.nextInt(run(ShopItem.size.result))
+  private def nextIdx(implicit db: DatabaseManager) = Random.nextInt(run(ShopItem.size.result) - 1)+1
 
   def randomShopItem(implicit db: DatabaseManager): ShopItemRow = {
-    run(ShopItem.drop(nextIdx - 1).take(1).result).head
+    run(ShopItem.drop(nextIdx).take(1).result).head
   }
 }

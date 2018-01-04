@@ -1,8 +1,6 @@
-package ru.hopcone.bot.dialog
+package ru.hopcone.bot.dialog.cart
 
 import com.typesafe.scalalogging.LazyLogging
-import ru.hopcone.bot.data.models.DialogStepContext
-
 
 trait DialogStep extends LazyLogging {
 
@@ -11,6 +9,10 @@ trait DialogStep extends LazyLogging {
   def buttons: Seq[String]
 
   def transitions: PartialFunction[String, DialogStep]
+
+  def commonButtons: Seq[String] = Seq.empty
+
+  final def getButtons: Seq[String] = buttons ++ commonButtons
 
   def next(input: String): Option[DialogStep] = {
     if (transitions.isDefinedAt(input)) {
@@ -22,4 +24,3 @@ trait DialogStep extends LazyLogging {
   }
 }
 
-abstract class DialogStepBase(implicit val ctx: DialogStepContext) extends DialogStep

@@ -16,12 +16,13 @@ object OrderItemDAO extends AbstractDAO[OrderItemRow] {
   val OrderStateDelivered = "delivered"
 
   private def buildNewOrder(userId: Int) =
-    OrderDataRow(NewEntryId, userId, Some(0), new Timestamp(System.currentTimeMillis()), None, OrderStateNew, None)
+    OrderDataRow(0, userId, Some(0), new Timestamp(System.currentTimeMillis()), None, OrderStateNew, None)
 
   def ensureOrder(implicit database: DatabaseManager, ctx: DialogStepContext): Tables.OrderDataRow = ctx.order match {
     case Some(order) => order
     case None =>
-      val order = OrderDataDAO.insert(buildNewOrder(ctx.userId))
+      val orderRow = buildNewOrder(ctx.userId)
+      val order = OrderDataDAO.insert(orderRow)
       ctx.updateOrder(order)
   }
 

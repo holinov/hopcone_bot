@@ -2,27 +2,25 @@ package ru.hopcone.bot.dialog
 
 import ru.hopcone.bot.data.dao.CategoriesDAO
 import ru.hopcone.bot.data.models.{DatabaseManager, DialogStepContext}
+import ru.hopcone.bot.dialog.cart.DialogStep
 
-class DialogMapBuilder(implicit db: DatabaseManager, dctx: DialogStepContext) {
+class DialogMapBuilder(implicit db: DatabaseManager, ctx: DialogStepContext) {
 
   import DialogMapBuilder._
 
-  private lazy val menuStep: CategoryListStep = CategoryListStep(CategoriesDAO.rootCategories(), rootStep)
-  private lazy val accountMenuStep: BasicDialogStep = BasicDialogStep(AccountInfoButton, Seq.empty, Map.empty)
+  // DON'T REMOVE TYPES BECAUSE OF RECURSIVE LAZY VALS
+  private lazy val userMenuStep: CategoryListStep = CategoryListStep(CategoriesDAO.rootCategories(), rootStep)
+  private lazy val accountInfoStep: DialogStep = AccountInfoStep(rootStep)
 
   val rootStep = BasicDialogStep(MainMenuTitle,
     Seq(MenuButton, AccountInfoButton),
     Map(
-      MenuButton -> menuStep,
-      AccountInfoButton -> accountMenuStep
+      MenuButton -> userMenuStep,
+      AccountInfoButton -> accountInfoStep
     )
   )
 
   def build: DialogMap = DialogMap(rootStep)
 }
 
-object DialogMapBuilder {
-  val MenuButton = "Меню"
-  val AccountInfoButton = "Личный кабинет"
-  val MainMenuTitle = "Главное меню"
-}
+object DialogMapBuilder extends DialogButtons
