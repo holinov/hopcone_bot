@@ -2,14 +2,16 @@ package ru.hopcone.bot
 
 import ru.hopcone.bot.data.dao.{OrderItemDAO, ProductsDAO}
 import ru.hopcone.bot.models.Tables._
-import ru.hopcone.bot.support.{BaseSpec, DBBasedSpec}
+import ru.hopcone.bot.support.DBBasedSpec
 
 
 class OrderItemDAOSpec extends DBBasedSpec {
 
   describe("OrderItemDAO") {
-    def newOrder = ctx.updateOrder(OrderItemDAO.ensureOrder)
-
+    def newOrder = {
+      ctx.clearOrder()
+      ctx.updateOrder(OrderItemDAO.ensureOrder)
+    }
     def newOrderItem = ProductsDAO.randomShopItem
 
     describe("updates order row data") {

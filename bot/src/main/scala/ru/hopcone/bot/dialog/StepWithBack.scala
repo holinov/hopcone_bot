@@ -5,7 +5,7 @@ import ru.hopcone.bot.dialog.cart.{DialogStep, DialogStepBase}
 trait StepWithBack extends DialogStepBase {
   def prevStep: DialogStep
 
-  val BackButton = "Назад"
+  private val BackButton = "Назад"
 
   override def commonButtons: Seq[String] = Seq(BackButton)
 

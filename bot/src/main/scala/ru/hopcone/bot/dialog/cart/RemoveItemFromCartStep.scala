@@ -12,7 +12,7 @@ case class RemoveItemFromCartStep(item: Tables.ShopItemRow, prevStep: AddToCartS
 
   override def stepText: String = s"Вы правда хотите удалить ${item.name}?"
 
-  override def buttons: Seq[String] = Seq(RemoveButton, BackButton)
+  override def buttons: Seq[String] = Seq(RemoveButton)
 
   override protected def onTransition: PartialFunction[String, DialogStep] = {
     case RemoveButton =>

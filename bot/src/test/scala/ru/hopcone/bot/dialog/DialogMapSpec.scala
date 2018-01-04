@@ -31,7 +31,7 @@ class DialogMapSpec extends DBBasedSpec {
 
     it("should build root categories info") {
       mainTransition shouldNot be(None)
-      mainTransition.foreach(s => s.buttons should have size 4)
+      mainTransition.foreach(s => s.buttons should have size 3)
     }
 
     it(s"should build sub categories from ${catTransition.get.buttons}") {

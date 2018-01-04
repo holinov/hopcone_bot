@@ -12,9 +12,7 @@ case class AddItemToCartStep(item: Tables.ShopItemRow, prevStep: AddToCartStep)
 
   override def stepText: String = s"Заказать ${item.name}"
 
-  override def buttons: Seq[String] = {
-    orderAmounts.map(_.toString) ++ Seq(BackButton)
-  }
+  override def buttons: Seq[String] = orderAmounts.map(_.toString)
 
   override def onTransition: PartialFunction[String, DialogStep] = {
     case amount if orderAmounts.contains(BigDecimal(amount)) =>

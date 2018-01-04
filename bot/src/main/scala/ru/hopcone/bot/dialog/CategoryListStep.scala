@@ -12,7 +12,7 @@ case class CategoryListStep(categories: Seq[ShopCategoryRow], prevStep: DialogSt
 
   override def stepText: String = "Что вас интересует?"
 
-  override def buttons: Seq[String] = categories.map(_.name) ++ Seq(BackButton)
+  override def buttons: Seq[String] = categories.map(_.name)
 
   override def onTransition: PartialFunction[String, DialogStep] = {
     case categoryName if buttons.contains(categoryName) =>

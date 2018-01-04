@@ -1,9 +1,7 @@
 package ru.hopcone.bot.dialog.cart
 
-import ru.hopcone.bot.data.dao._
 import ru.hopcone.bot.data.models.{DatabaseManager, DialogStepContext}
 import ru.hopcone.bot.dialog.StepWithBack
-import ru.hopcone.bot.dialog.cart.AddToCartStep.RemoveButton
 import ru.hopcone.bot.models.Tables._
 
 case class AddToCartStep(item: ShopItemRow, prevStep: DialogStep)
@@ -14,7 +12,7 @@ case class AddToCartStep(item: ShopItemRow, prevStep: DialogStep)
 
   override def stepText: String = s"Добавить в ${item.name} корзину?"
 
-  override def buttons: Seq[String] = Seq(InfoButton, AddToCartButton, RemoveFromCartButton, CartButton, BackButton)
+  override def buttons: Seq[String] = Seq(InfoButton, AddToCartButton, RemoveFromCartButton, CartButton)
 
   override def onTransition: PartialFunction[String, DialogStep] = {
     case InfoButton => this //TODO: Answer with item description
@@ -23,10 +21,6 @@ case class AddToCartStep(item: ShopItemRow, prevStep: DialogStep)
     case CartButton => ShowCartStep(this)
   }
 }
-
-
-
-
 
 object AddToCartStep {
   val AddToCartButton = "Добавить в корзину"

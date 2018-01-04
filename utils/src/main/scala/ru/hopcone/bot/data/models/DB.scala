@@ -10,6 +10,10 @@ import scala.concurrent.{Await, Future}
 object DB {
   protected val MaxTimeout: Duration = 10.seconds
 
+  def drop(db: DatabaseManager) = {
+    Await.ready(db.run(Tables.schema.truncate), MaxTimeout)
+  }
+
   def initialize(db: DatabaseManager): Future[Unit] = {
     Await.ready(db.run(Tables.schema.create), MaxTimeout)
     Await.ready(db.run(seedData), MaxTimeout)

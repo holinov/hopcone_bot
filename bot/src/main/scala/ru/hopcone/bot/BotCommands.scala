@@ -36,6 +36,11 @@ object BotCommands extends DefaultImplicits {
     override def text: Option[String] = title
   }
 
+  case class UserMessageResponseError(error: Throwable, request: UserMessage)
+    extends BotResponse[UserMessage] {
+    override def text: Option[String] = error.getMessage
+  }
+
 }
 
 

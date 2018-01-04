@@ -22,12 +22,24 @@ case class ShowCartStep(prevStep: DialogStep)
     sb.toString()
   }
 
-  override def buttons: Seq[String] = Seq(CheckoutButton, CancelOrderButton, BackButton)
+  override def buttons: Seq[String] = Seq(CheckoutButton, CancelOrderButton)
 
   override protected def onTransition: PartialFunction[String, DialogStep] = {
-    case CheckoutButton => ShowCartStep(this)
+    case CheckoutButton =>
+      ShowCartStep(prevStep)
     case CancelOrderButton =>
-      ctx.clearOrder
+      ctx.clearOrder()
       prevStep
   }
+}
+
+case class SelectAddressStep(prevStep: DialogStep)
+                            (implicit database: DatabaseManager, ctx: DialogStepContext)
+  extends StepWithBack with CartChildStep {
+
+  override protected def onTransition: PartialFunction[String, DialogStep] = ???
+
+  override def stepText: String = ???
+
+  override def buttons: Seq[String] = ???
 }

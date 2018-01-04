@@ -1,4 +1,4 @@
-import com.typesafe.config.ConfigFactory
+
 
 val json4sVersion = "3.5.3"
 val slickVersion = "3.2.1"
@@ -39,10 +39,9 @@ lazy val commonSettings = Seq(
     "com.typesafe.akka" %% "akka-http" % akkaHttpVersion excludeAll ExclusionRule("com.typesafe.akka", "akka-stream"),
 
     // TESTS
+    "com.typesafe.akka" %% "akka-testkit" % akkaVersion,
     "org.scalatest" %% "scalatest" % "3.0.4" % Test
-  ),
-  //  slick <<= slickCodeGenTask, // register manual sbt command
-  //  sourceGenerators in Compile <+= slickCodeGenTask // register automatic code generation on every compile, remove for only manual use
+  )
 )
 
 

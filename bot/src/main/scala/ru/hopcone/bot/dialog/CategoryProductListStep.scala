@@ -9,7 +9,7 @@ case class CategoryProductListStep(category: ShopCategoryRow, products: Seq[Shop
   extends StepWithBack {
   override def stepText: String = s"Что из ${category.name} вас интересует?"
 
-  override def buttons: Seq[String] = products.map(_.name.toString) ++ Seq(BackButton)
+  override def buttons: Seq[String] = products.map(_.name.toString)
 
   //  override def transitions: PartialFunction[String, DialogStep] = {
   //    case productName =>
