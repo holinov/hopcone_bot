@@ -1,10 +1,20 @@
 package ru.hopcone.bot.dao
 
+import java.sql.Timestamp
+
+import org.joda.time.LocalTime
 import ru.hopcone.bot.models.DatabaseManager
 import ru.hopcone.bot.models.Tables._
 import slick.jdbc.PostgresProfile.api._
 
 object OrderDataDAO extends AbstractDAO[OrderDataRow] {
+  def setOrderDeliveryTime(order: OrderDataRow, afterMinutes: Int)(implicit db: DatabaseManager): OrderDataRow = {
+    val deliveryDate = new LocalTime().plusMinutes(afterMinutes).toDateTimeToday.toDateTime.getMillis
+    val updated = order.copy(deliveredAt = Some(new Timestamp(deliveryDate)))
+    update(updated)
+    updated
+  }
+
   private val InsertOrderStmt = OrderData returning OrderData.map(_.orderId) into ((item, orderId) => item.copy(orderId = orderId))
 
   def findLastNewOrder(userId: Int)(implicit db: DatabaseManager): Option[OrderDataRow] =

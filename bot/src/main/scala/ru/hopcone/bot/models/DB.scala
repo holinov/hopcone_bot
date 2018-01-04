@@ -40,6 +40,11 @@ object DB {
       ShopItemRow(2, "BEER 1", Some(IpaBeerCategory.id), 3),
       ShopItemRow(3, "BEER 2", Some(IpaBeerCategory.id), 4),
       ShopItemRow(4, "BEER 3", Some(IpaBeerCategory.id), 5.1)
+    ),
+
+    Tables.DeliveryAddress ++= Seq(
+      DeliveryAddressRow(1, None, "HOPCONE"),
+      DeliveryAddressRow(2, None, "КРАФТ & КРАБ")
     )
   )
 

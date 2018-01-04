@@ -11,6 +11,7 @@ case class UserSession(user: User) {
     UserInfoDAO.addAddress(user.id, addressText)
 
   def addresses(implicit database: DatabaseManager): Seq[DeliveryAddressRow] =
-    UserInfoDAO.userAddresses(user.id)
+  //UserInfoDAO.userAddresses(user.id)
+    UserInfoDAO.commonAddresses()
 
 }

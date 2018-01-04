@@ -1,5 +1,6 @@
 package ru.hopcone.bot.dialog.cart
 
+import org.joda.time.DateTime
 import ru.hopcone.bot.dao.{DeliveryAddressDAO, OrderItemDAO, ProductsDAO, UserInfoDAO}
 import ru.hopcone.bot.dialog._
 import ru.hopcone.bot.models.Tables.OrderDataRow
@@ -25,7 +26,8 @@ case class ConfirmOrderStep(prevStep: DialogStep)
       case (cartItem, idx) =>
         sb.append(idx + 1).append(s"] ${ProductsDAO.productName(cartItem.itemId)} ${cartItem.amount} л.\n")
     }
-    sb.append(s"Доставка по адресу:\n${renderAddress(order.deliveryAddress.get)}")
+    sb.append(s"Точка выдачи:\n${renderAddress(order.deliveryAddress.get)}\n")
+    sb.append(s"Время готовности:\n${new DateTime(order.deliveredAt.get).toString("YYYY.MM.dd HH:mm")}")
   }
 
   override def buttons: Seq[String] = Seq(CancelOrderButton, ConfirmButton)

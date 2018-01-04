@@ -3,15 +3,15 @@ package ru.hopcone.bot.dao
 import org.postgresql.util.PSQLException
 import ru.hopcone.bot.models.DatabaseManager
 import ru.hopcone.bot.models.Tables._
+import slick.jdbc.PostgresProfile.api._
 
 object UserInfoDAO extends AbstractDAO[UserInfoRow] {
-
-  import slick.jdbc.PostgresProfile.api._
+  def commonAddresses()(implicit db: DatabaseManager): Seq[DeliveryAddressRow] =
+    run(DeliveryAddress.filter(_.userId.isEmpty).result)
 
   def addAddress(userId: Int, address: String)
                 (implicit db: DatabaseManager): Int =
     run(DeliveryAddress += DeliveryAddressRow(0, userId, address))
-
 
   def touchUser(user: UserInfoRow)
                (implicit db: DatabaseManager): Int =
@@ -21,7 +21,6 @@ object UserInfoDAO extends AbstractDAO[UserInfoRow] {
     } catch {
       case _: PSQLException => 0
     }
-
 
   def load(id: Int)
           (implicit db: DatabaseManager): UserInfoRow =

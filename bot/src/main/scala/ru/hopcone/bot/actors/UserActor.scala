@@ -14,7 +14,7 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.util.control.NonFatal
 
-class BotSecurityException() extends Exception("not allowed operation")
+
 
 class UserActor(user: TUser, implicit val db: DatabaseManager, implicit val notificator: AdminApi)
   extends BasicActor with AsyncExecutionPoint {
@@ -29,16 +29,6 @@ class UserActor(user: TUser, implicit val db: DatabaseManager, implicit val noti
 
   override def receive: Receive = {
     case requestMessage: UserMessage =>
-      //      logger.debug(s"Processing user message ${pp(requestMessage)}")
-      //      val response = processTextCommand(requestMessage) map {
-      //        case Some(r) => r
-      //        case None =>
-      //          if(notificator.isAdmin(dialogContext.userId))
-      //            downloadFile(requestMessage)
-      //          else UserMessageResponseError(new BotSecurityException, requestMessage)
-      //      }
-      //
-      //      response.foreach(sender() ! _)
       val resp = processTextCommand(requestMessage) orElse downloadFile(requestMessage)
       resp.foreach { r =>
         logger.debug(s"Responding ${pp(r)}")
@@ -72,9 +62,9 @@ class UserActor(user: TUser, implicit val db: DatabaseManager, implicit val noti
   private def downloadFile(requestMessage: UserMessage): Option[BotResponse[_]] = {
     val fileOption = requestMessage.message.document
 
-    if (!notificator.isAdmin(user.id)) Some(UserMessageResponseError(new BotSecurityException, requestMessage))
+    if (!notificator.isAdmin(user.id))
+      Some(UserMessageResponseError(new BotSecurityException, requestMessage))
     else
-
       fileOption flatMap { file =>
         for {
           mime <- file.mimeType if "text/csv" == mime

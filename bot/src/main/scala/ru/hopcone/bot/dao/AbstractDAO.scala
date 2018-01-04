@@ -2,13 +2,13 @@ package ru.hopcone.bot.dao
 
 //import ru.hopcone.bot.dao.ProductsDAO.MaxTimeout
 import com.typesafe.scalalogging.LazyLogging
-import ru.hopcone.bot.models
+import ru.hopcone.bot.{DefaultImplicits, models}
 import slick.dbio.{DBIOAction, NoStream}
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
-trait AbstractDAO[EntryType] extends LazyLogging {
+trait AbstractDAO[EntryType] extends LazyLogging with DefaultImplicits {
 
   val NewEntryId: Int = -1
 

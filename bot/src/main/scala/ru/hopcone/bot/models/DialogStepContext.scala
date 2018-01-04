@@ -9,6 +9,10 @@ import ru.hopcone.bot.{AdminApi, models}
 
 case class DialogStepContext(user: UserSession, private var ord: Option[OrderDataRow] = None)
                             (implicit database: DatabaseManager, notificator: AdminApi) {
+  def setOrderDeliveryTime(afterMinutes: Int): OrderDataRow = {
+    updateOrder(OrderDataDAO.setOrderDeliveryTime(ord.get, afterMinutes))
+  }
+
   def isAdmin: Boolean = notificator.isAdmin(userId)
 
   def confirmOrder(): OrderDataRow = {
@@ -30,6 +34,7 @@ case class DialogStepContext(user: UserSession, private var ord: Option[OrderDat
 
   def setOrderDeliveryAddress(address: bot.models.Tables.DeliveryAddressRow): Unit = {
     ord = ord.map(o => o.copy(deliveryAddress = Some(address.id)))
+    OrderDataDAO.setAddress(ord.get, address)
   }
 
   def notifyAdmins(notification: String): Unit = notificator.notify(notification)

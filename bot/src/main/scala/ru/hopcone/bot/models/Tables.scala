@@ -25,13 +25,13 @@ trait Tables {
     * @param id      Database column id SqlType(serial), AutoInc, PrimaryKey
     * @param userId  Database column user_id SqlType(int4)
     * @param address Database column address SqlType(text) */
-  case class DeliveryAddressRow(id: Int, userId: Int, address: String)
+  case class DeliveryAddressRow(id: Int, userId: Option[Int], address: String)
 
   /** GetResult implicit for fetching DeliveryAddressRow objects using plain SQL queries */
   implicit def GetResultDeliveryAddressRow(implicit e0: GR[Int], e1: GR[String]): GR[DeliveryAddressRow] = GR {
     prs =>
       import prs._
-      DeliveryAddressRow.tupled((<<[Int], <<[Int], <<[String]))
+      DeliveryAddressRow.tupled((<<[Int], <<[Option[Int]], <<[String]))
   }
 
   /** Table description of table delivery_address. Objects of this class serve as prototypes for rows in queries. */
@@ -44,7 +44,7 @@ trait Tables {
     /** Database column id SqlType(serial), AutoInc, PrimaryKey */
     val id: Rep[Int] = column[Int]("id", O.AutoInc, O.PrimaryKey)
     /** Database column user_id SqlType(int4) */
-    val userId: Rep[Int] = column[Int]("user_id")
+    val userId: Rep[Option[Int]] = column[Option[Int]]("user_id")
     /** Database column address SqlType(text) */
     val address: Rep[String] = column[String]("address")
 
