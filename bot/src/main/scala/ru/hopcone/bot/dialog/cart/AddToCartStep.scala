@@ -12,7 +12,8 @@ case class AddToCartStep(item: ShopItemRow, prevStep: DialogStep)
 
   override def stepText: String = s"Добавить в ${item.name} корзину?"
 
-  override def buttons: Seq[String] = Seq(InfoButton, AddToCartButton, RemoveFromCartButton, CartButton)
+  override def buttons: Seq[String] = Seq(AddToCartButton, RemoveFromCartButton, CartButton)
+  //override def buttons: Seq[String] = Seq(InfoButton, AddToCartButton, RemoveFromCartButton, CartButton)
 
   override def onTransition: PartialFunction[String, DialogStep] = {
     case InfoButton => this //TODO: Answer with item description

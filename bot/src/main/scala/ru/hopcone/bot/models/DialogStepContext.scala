@@ -9,6 +9,8 @@ import ru.hopcone.bot.{AdminApi, models}
 
 case class DialogStepContext(user: UserSession, private var ord: Option[OrderDataRow] = None)
                             (implicit database: DatabaseManager, notificator: AdminApi) {
+  def userName: Option[String] = user.user.username
+
   def setOrderDeliveryTime(afterMinutes: Int): OrderDataRow = {
     updateOrder(OrderDataDAO.setOrderDeliveryTime(ord.get, afterMinutes))
   }

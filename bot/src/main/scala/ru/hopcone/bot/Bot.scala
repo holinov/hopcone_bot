@@ -53,7 +53,7 @@ class Bot(config: Config, db: DatabaseManager) extends TelegramBot
 
   onChannelPost { implicit msg =>
     logger.debug(s"$sep\nReceived channel msg: ${writePretty(msg)}\n$sep")
-    if (msg.text.isDefined && msg.text.contains("@hopcone_bot tellid")) {
+    if (msg.text.isDefined && msg.text.contains("@fruttech_bot tellid")) {
       reply(s"Channel chat id: ${msg.chat.id}", replyToMessageId = Some(msg.messageId))
     }
   }

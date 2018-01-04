@@ -12,24 +12,26 @@ package object render extends DefaultImplicits with LazyLogging {
       override def text: String = r.text.get
 
       override def keyboardMarkup: Option[ReplyKeyboardMarkup] = {
-        val buttons = r.buttons
-          .map { case (cat) => KeyboardButton.text(cat) }
-        ReplyKeyboardMarkup.singleColumn(buttons)
+        if (r.buttons.lengthCompare(2) <= 0) singleCol(r)
+        else if (r.buttons.lengthCompare(6) <= 0) someCol(r, 2)
+        else someCol(r, 3)
       }
     }
   }
 
-  //  implicit def render(r: IndexResponse): BotResponseRenderer[IndexResponse] =
-  //    new BotResponseRenderer[IndexResponse] {
-  //      def text: String = "Что вас интересует?"
-  //
-//      override def keyboardMarkup: Option[ReplyKeyboardMarkup] = {
-  //        val buttons = r.categories
-  //          .zipWithIndex
-  //          .map { case (cat, idx) => KeyboardButton.text(s"$idx> ${cat.name}") }
-//        ReplyKeyboardMarkup.singleColumn(buttons)
-//      }
-//
-  //      override def replyToMsgId: Option[Int] = r.request.message.messageId
-//    }
+  private def singleCol(r: UserMessageResponse) = {
+    val buttons = r.buttons
+      .map { case (cat) => KeyboardButton.text(cat) }
+    ReplyKeyboardMarkup.singleColumn(buttons, resizeKeyboard = Some(true))
+  }
+
+  private def someCol(r: UserMessageResponse, groupSize: Int) = {
+    val buttons = r.buttons
+      .map { case (cat) => KeyboardButton.text(cat) }
+      .grouped(groupSize)
+      .toSeq
+
+    ReplyKeyboardMarkup(buttons, Some(true))
+  }
+
 }
