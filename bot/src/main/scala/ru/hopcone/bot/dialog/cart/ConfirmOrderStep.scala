@@ -1,7 +1,7 @@
 package ru.hopcone.bot.dialog.cart
 
 import org.joda.time.DateTime
-import ru.hopcone.bot.dao.{DeliveryAddressDAO, OrderItemDAO, ProductsDAO, UserInfoDAO}
+import ru.hopcone.bot.dao._
 import ru.hopcone.bot.dialog._
 import ru.hopcone.bot.models.Tables.OrderDataRow
 import ru.hopcone.bot.models.{DatabaseManager, DialogStepContext}
@@ -20,12 +20,18 @@ case class ConfirmOrderStep(prevStep: DialogStep)
   private def renderOrder(title: String, order: OrderDataRow) = {
     val items = OrderItemDAO.items(order)
     val sb = StringBuilder.newBuilder.append(title).append("\n")
-    items.zipWithIndex.map {
+    val totalPrice = items.zipWithIndex.map {
       case (cartItem, idx) =>
-        sb.append(idx + 1).append(s"] ${ProductsDAO.productName(cartItem.itemId)} ${cartItem.amount} л.\n")
-    }
+        val itemInfo = ProductsDAO.load(cartItem.itemId)
+        val units = CategoriesDAO.units(itemInfo.categoryId.get)
+        val price = itemInfo.price * cartItem.amount
+        sb.append(idx + 1).append(s"] '${ProductsDAO.productName(cartItem.itemId)}' X ${cartItem.amount} $units = ${price.formatted("%.2f")} руб.\n")
+        price
+    }.sum
+    sb.append(s"Сумма: ${totalPrice.formatted("%.2f")} руб.\n")
     sb.append(s"Точка выдачи:\n${renderAddress(order.deliveryAddress.get)}\n")
-    sb.append(s"Время готовности:\n${new DateTime(order.deliveredAt.get).toString("YYYY.MM.dd HH:mm")}")
+    sb.append(s"Время готовности:\n${new DateTime(order.deliveredAt.get).toString("YYYY.MM.dd HH:mm")}\n")
+    sb.append(s"Номер заказа: ${order.orderId}\n")
   }
 
   override def buttons: Seq[String] = Seq(CancelOrderButton, ConfirmButton)

@@ -46,7 +46,7 @@ class Bot(config: Config, db: DatabaseManager) extends TelegramBot
 
   onMessage { implicit msg =>
     logger.debug(s"$sep\nReceived msg: ${writePretty(msg)}\n$sep")
-    askBot(UserMessage(msg)) { resp: UserMessageResponse =>
+    askBot(UserMessage(msg)) { resp: BotMessageResponse =>
       renderResponse(resp)
     }
   }
@@ -55,6 +55,9 @@ class Bot(config: Config, db: DatabaseManager) extends TelegramBot
     logger.debug(s"$sep\nReceived channel msg: ${writePretty(msg)}\n$sep")
     if (msg.text.isDefined && msg.text.contains("@fruttech_bot tellid")) {
       reply(s"Channel chat id: ${msg.chat.id}", replyToMessageId = Some(msg.messageId))
+    }
+    askBot(AdminMessage(msg)) { resp: BotMessageResponse =>
+      renderResponse(resp)
     }
   }
 
@@ -66,8 +69,6 @@ class Bot(config: Config, db: DatabaseManager) extends TelegramBot
     "Привет! Я знаю вот такие команды:\nДля подбробностей наберите _/help_ <команда>\n"
 
   private def askBot[C <: BotCommand, R <: BotResponse[C]](c: C)(action: R => Unit): Unit = {
-    val user = c.message.from.get
-    logger.info(s"Processing command ${c.getClass.getCanonicalName} for user ${user.username} [${user.id}]")
     (botActor ? c)
       .map(r => r.asInstanceOf[R])
       .foreach(r => action(r))

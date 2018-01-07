@@ -10,6 +10,8 @@ object BotCommands extends DefaultImplicits {
   sealed trait BotCommand {
     def userId: Int = message.from.get.id
 
+    def text: String = message.text getOrElse "???"
+
     def message: Message
   }
 
@@ -30,14 +32,23 @@ object BotCommands extends DefaultImplicits {
 
   case class UserMessage(message: Message) extends BotCommand
 
-  case class UserMessageResponse(title: String, buttons: Seq[String], request: UserMessage)
-    extends BotResponse[UserMessage]
+  case class AdminMessage(message: Message) extends BotCommand {
+    def chatId: Long = message.chat.id
+  }
+
+  case class BotMessageResponse(title: String, buttons: Seq[String], request: BotCommand)
+    extends BotResponse[BotCommand]
   {
     override def text: Option[String] = title
   }
 
-  case class UserMessageResponseError(error: Throwable, request: UserMessage)
-    extends BotResponse[UserMessage] {
+  case class BotAdminMessageResponse(title: String, buttons: Seq[String], request: AdminMessage)
+    extends BotResponse[AdminMessage] {
+    override def text: Option[String] = title
+  }
+
+  case class BotMessageResponseError(error: Throwable, request: BotCommand)
+    extends BotResponse[BotCommand] {
     override def text: Option[String] = error.getMessage
   }
 

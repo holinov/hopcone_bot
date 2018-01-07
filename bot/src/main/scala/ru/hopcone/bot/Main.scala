@@ -13,7 +13,7 @@ object Main extends LazyLogging {
     logger.info(s"Starting with config $config")
 
     val db = DB.database("hopcone_database")
-    DB.drop(db)
+    if (args.contains("-recreate")) DB.drop(db)
 
     try {
       val bot = new Bot(config, db)

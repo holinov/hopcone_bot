@@ -14,7 +14,7 @@ class CsvSpec extends DBBasedSpec {
         val loadedCats = Csv.loadCats(file)
         loadedCats should be(cats)
 
-        CategoriesDAO.forceLoad(loadedCats)
+        CategoriesDAO.forceInsertOrUpdate(loadedCats)
       }
     }
 
@@ -28,7 +28,7 @@ class CsvSpec extends DBBasedSpec {
         val loadedCats = Csv.loadItems(file)
         loadedCats should be(cats)
 
-        ProductsDAO.forceLoad(loadedCats)
+        ProductsDAO.forceInsertOrUpdate(loadedCats)
       }
     }
   }

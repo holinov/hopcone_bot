@@ -5,7 +5,7 @@ import akka.testkit._
 import info.mukel.telegrambot4s.models.Message
 import org.scalactic.source.Position
 import org.scalatest._
-import ru.hopcone.bot.BotCommands.{UserMessage, UserMessageResponse, UserMessageResponseError}
+import ru.hopcone.bot.BotCommands.{BotMessageResponse, BotMessageResponseError, UserMessage}
 import ru.hopcone.bot.support.DBBasedSpecLike
 
 import scala.concurrent.duration._
@@ -72,8 +72,8 @@ class UserActorSpec extends TestKit(ActorSystem("MySpec"))
                             (implicit userActor: DialogActor, pos: Position): Unit = {
     userActor.actorRef ! UserMessage(Message(1, Some(user), 0, null, text = Some(msg)))
     expectMsgPF(hint = resp) {
-      case UserMessageResponse(respMsg, _, _) if respMsg == resp =>
-      case UserMessageResponseError(error, _) => fail(s"For message $msg\nexpected: $resp", error)
+      case BotMessageResponse(respMsg, _, _) if respMsg == resp =>
+      case BotMessageResponseError(error, _) => fail(s"For message $msg\nexpected: $resp", error)
     }
   }
 }

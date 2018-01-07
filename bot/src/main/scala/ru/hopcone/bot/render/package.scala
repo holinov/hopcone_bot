@@ -2,13 +2,13 @@ package ru.hopcone.bot
 
 import com.typesafe.scalalogging.LazyLogging
 import info.mukel.telegrambot4s.models.{KeyboardButton, ReplyKeyboardMarkup}
-import ru.hopcone.bot.BotCommands.UserMessageResponse
+import ru.hopcone.bot.BotCommands.BotMessageResponse
 
 import scala.language.implicitConversions
 
 package object render extends DefaultImplicits with LazyLogging {
-  implicit def render(r: UserMessageResponse): BotResponseRenderer[UserMessageResponse] = {
-    new BotResponseRenderer[UserMessageResponse] {
+  implicit def render(r: BotMessageResponse): BotResponseRenderer[BotMessageResponse] = {
+    new BotResponseRenderer[BotMessageResponse] {
       override def text: String = r.text.get
 
       override def keyboardMarkup: Option[ReplyKeyboardMarkup] = {
@@ -19,13 +19,13 @@ package object render extends DefaultImplicits with LazyLogging {
     }
   }
 
-  private def singleCol(r: UserMessageResponse) = {
+  private def singleCol(r: BotMessageResponse) = {
     val buttons = r.buttons
       .map { case (cat) => KeyboardButton.text(cat) }
     ReplyKeyboardMarkup.singleColumn(buttons, resizeKeyboard = Some(true))
   }
 
-  private def someCol(r: UserMessageResponse, groupSize: Int) = {
+  private def someCol(r: BotMessageResponse, groupSize: Int) = {
     val buttons = r.buttons
       .map { case (cat) => KeyboardButton.text(cat) }
       .grouped(groupSize)

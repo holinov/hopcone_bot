@@ -16,10 +16,16 @@ case class ShowCartStep(prevStep: DialogStep)
     val order = ensureOrder
     val items = OrderItemDAO.items(order)
     val sb = StringBuilder.newBuilder.append("Вы заказали:\n")
-    items.zipWithIndex.map {
+    val totalPrice = items.zipWithIndex.map {
       case (cartItem, idx) =>
-        sb.append(idx + 1).append(s"] ${ProductsDAO.productName(cartItem.itemId)} ${cartItem.amount} л.\n")
-    }
+        val itemInfo = ProductsDAO.load(cartItem.itemId)
+        val units = CategoriesDAO.units(itemInfo.categoryId.get)
+        val price = itemInfo.price * cartItem.amount
+        sb.append(idx + 1).append(s"] '${ProductsDAO.productName(cartItem.itemId)}' X ${cartItem.amount} $units = ${price.formatted("%.2f")} руб.\n")
+        price
+    }.sum
+    sb.append(s"Сумма: ${totalPrice.formatted("%.2f")} руб.\n")
+    sb.append(s"Номер заказа: ${order.orderId}\n")
     sb.toString()
   }
 

@@ -4,7 +4,7 @@ import java.sql.Timestamp
 
 import info.mukel.telegrambot4s.models.User
 import org.joda.time.LocalTime
-import ru.hopcone.bot.models.{DatabaseManager, Tables}
+import ru.hopcone.bot.models.DatabaseManager
 import ru.hopcone.bot.models.Tables._
 import slick.jdbc.PostgresProfile.api._
 
@@ -14,7 +14,6 @@ object OrderDataDAO extends AbstractDAO[OrderDataRow] {
   private def userOrdersQuery(userId: Int) = {
     OrderData
       .filter(_.userId === userId)
-      .sortBy(_.orderId * -1)
   }
 
   def userOrders(userId: Int)(implicit db: DatabaseManager): Seq[OrderDataRow] = {

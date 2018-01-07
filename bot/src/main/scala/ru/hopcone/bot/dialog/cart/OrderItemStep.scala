@@ -1,13 +1,26 @@
 package ru.hopcone.bot.dialog.cart
 
-import ru.hopcone.bot.dao.OrderItemDAO
+import ru.hopcone.bot.dao.{CategoriesDAO, OrderItemDAO}
 import ru.hopcone.bot.dialog.{DialogStep, StepWithBack}
-import ru.hopcone.bot.models.{DatabaseManager, DialogStepContext, Tables}
+import ru.hopcone.bot.models.{DB, DatabaseManager, DialogStepContext, Tables}
 
 case class OrderItemStep(item: Tables.ShopItemRow, prevStep: AddToCartStep)
                         (implicit database: DatabaseManager, ctx: DialogStepContext)
   extends StepWithBack {
-  private val orderAmounts = Seq(BigDecimal(0.5), BigDecimal(1), BigDecimal(2), BigDecimal(2.5))
+
+  private def ammountsByUnits(units: String) = {
+    units match {
+      case DB.Units.Liters => Seq(BigDecimal(0.5), BigDecimal(1), BigDecimal(1.5), BigDecimal(3), BigDecimal(4), BigDecimal(5))
+      case DB.Units.Counts => Range(1, 10).map(d => BigDecimal(d))
+      case unit =>
+        logger.warn(s"Unknown type $unit")
+        Range(1, 4).map(d => BigDecimal(d))
+    }
+  }
+
+  private lazy val cat = CategoriesDAO.load(item.categoryId.get)
+  private lazy val unitName = cat.units
+  private lazy val orderAmounts = ammountsByUnits(unitName)
 
   override def stepText: String = s"Заказать ${item.name}"
 

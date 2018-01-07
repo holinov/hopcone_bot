@@ -145,21 +145,21 @@ trait Tables {
     * @param id       Database column id SqlType(int4), PrimaryKey
     * @param name     Database column name SqlType(varchar)
     * @param parentId Database column parent_id SqlType(int4), Default(None) */
-  case class ShopCategoryRow(id: Int, name: String, parentId: Option[Int] = None)
+  case class ShopCategoryRow(id: Int, name: String, parentId: Option[Int] = None, units: String)
 
   /** GetResult implicit for fetching ShopCategoryRow objects using plain SQL queries */
   implicit def GetResultShopCategoryRow(implicit e0: GR[Int], e1: GR[String], e2: GR[Option[Int]]): GR[ShopCategoryRow] = GR {
     prs =>
       import prs._
-      ShopCategoryRow.tupled((<<[Int], <<[String], <<?[Int]))
+      ShopCategoryRow.tupled((<<[Int], <<[String], <<?[Int], <<[String]))
   }
 
   /** Table description of table shop_category. Objects of this class serve as prototypes for rows in queries. */
   class ShopCategory(_tableTag: Tag) extends profile.api.Table[ShopCategoryRow](_tableTag, "shop_category") {
-    def * = (id, name, parentId) <> (ShopCategoryRow.tupled, ShopCategoryRow.unapply)
+    def * = (id, name, parentId, units) <> (ShopCategoryRow.tupled, ShopCategoryRow.unapply)
 
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = (Rep.Some(id), Rep.Some(name), parentId).shaped.<>({ r => import r._; _1.map(_ => ShopCategoryRow.tupled((_1.get, _2.get, _3))) }, (_: Any) => throw new Exception("Inserting into ? projection not supported."))
+    def ? = (Rep.Some(id), Rep.Some(name), parentId, Rep.Some(units)).shaped.<>({ r => import r._; _1.map(_ => ShopCategoryRow.tupled((_1.get, _2.get, _3, _4.get))) }, (_: Any) => throw new Exception("Inserting into ? projection not supported."))
 
     /** Database column id SqlType(int4), PrimaryKey */
     val id: Rep[Int] = column[Int]("id", O.PrimaryKey)
@@ -167,6 +167,8 @@ trait Tables {
     val name: Rep[String] = column[String]("name")
     /** Database column parent_id SqlType(int4), Default(None) */
     val parentId: Rep[Option[Int]] = column[Option[Int]]("parent_id", O.Default(None))
+    /** Database column name SqlType(varchar) */
+    val units: Rep[String] = column[String]("units")
 
     /** Uniqueness Index over (name) (database name shop_category_name_key) */
     val index1 = index("shop_category_name_key", name, unique = true)

@@ -2,3 +2,4 @@ log/
 downloads/
 **/target/
 .idea/
+project/project/

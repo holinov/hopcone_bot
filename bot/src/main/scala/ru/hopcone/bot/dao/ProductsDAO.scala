@@ -9,10 +9,11 @@ import scala.util.Random
 
 
 object ProductsDAO extends AbstractDAO[ShopItemRow] {
+  def load(itemId: Int)(implicit db: DatabaseManager): ShopItemRow =
+    run(ShopItem.filter(_.id === itemId).result).head
 
-  def forceLoad(itemsToLoad: List[ShopItemRow])(implicit db: DatabaseManager): Any = {
+  def forceInsertOrUpdate(itemsToLoad: List[ShopItemRow])(implicit db: DatabaseManager): Any =
     itemsToLoad.foreach(i => run(ShopItem.insertOrUpdate(i)))
-  }
 
   def all()(implicit db: DatabaseManager): Seq[ShopItemRow] = run(ShopItem.result)
 

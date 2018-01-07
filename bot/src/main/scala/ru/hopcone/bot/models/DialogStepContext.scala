@@ -2,13 +2,26 @@ package ru.hopcone.bot.models
 
 import ru.hopcone
 import ru.hopcone.bot
-import ru.hopcone.bot.dao.OrderDataDAO
+import ru.hopcone.bot.dao.{OrderDataDAO, OrderItemDAO}
 import ru.hopcone.bot.models.Tables.OrderDataRow
 import ru.hopcone.bot.state.UserSession
 import ru.hopcone.bot.{AdminApi, models}
 
 case class DialogStepContext(user: UserSession, private var ord: Option[OrderDataRow] = None)
                             (implicit database: DatabaseManager, notificator: AdminApi) {
+  def isAdminChat(chatId: Long): Boolean = notificator.isAdminChat(chatId)
+
+
+  def cartSize: Int = ord match {
+    case None => 0
+    case Some(o) => OrderItemDAO.itemCount(o)
+  }
+
+  def cartTotalPrice: BigDecimal = ord match {
+    case None => 0
+    case Some(o) => OrderItemDAO.items(o).map(i => i.totalPrice).sum
+  }
+
   def userName: Option[String] = user.user.username
 
   def setOrderDeliveryTime(afterMinutes: Int): OrderDataRow = {

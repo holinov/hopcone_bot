@@ -9,6 +9,13 @@ import scala.concurrent.{Await, Future}
 object DB {
   protected val MaxTimeout: Duration = 10.seconds
 
+  object Units {
+    val Liters = "Л"
+    val Counts = "ШТ"
+  }
+
+  import Units._
+
   def drop(db: DatabaseManager): Future[Unit] = {
     Await.ready(db.run(Tables.schema.drop), MaxTimeout)
   }
@@ -18,14 +25,13 @@ object DB {
     Await.ready(db.run(seedData), MaxTimeout)
   }
 
-  val BeerCategory = ShopCategoryRow(1, "Пиво")
-  val FoodCategory = ShopCategoryRow(2, "Еда")
-  val ApperetizersCategory = ShopCategoryRow(3, "Закуски")
+  val BeerCategory = ShopCategoryRow(1, "Пиво", units = Liters)
+  val FoodCategory = ShopCategoryRow(2, "Еда", units = Counts)
+  val ApperetizersCategory = ShopCategoryRow(3, "Закуски", units = Counts)
 
-  val IpaBeerCategory = ShopCategoryRow(4, "IPA", Some(BeerCategory.id))
-  val ApaBeerCategory = ShopCategoryRow(5, "APA", Some(BeerCategory.id))
-  val LagerBeerCategory = ShopCategoryRow(6, "Lager", Some(BeerCategory.id))
-
+  val IpaBeerCategory = ShopCategoryRow(4, "IPA", Some(BeerCategory.id), units = Liters)
+  val ApaBeerCategory = ShopCategoryRow(5, "APA", Some(BeerCategory.id), units = Liters)
+  val LagerBeerCategory = ShopCategoryRow(6, "Lager", Some(BeerCategory.id), units = Liters)
 
   val seedData = DBIO.seq(
     Tables.ShopCategory ++= Seq(BeerCategory, FoodCategory, ApperetizersCategory),

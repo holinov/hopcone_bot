@@ -3,12 +3,11 @@ package ru.hopcone.bot
 import com.typesafe.config.Config
 import com.typesafe.scalalogging.LazyLogging
 import info.mukel.telegrambot4s.methods.{GetFile, ParseMode, SendMessage}
-import info.mukel.telegrambot4s.models.File
+import info.mukel.telegrambot4s.models.{ChatId, File}
 
 import scala.concurrent.Future
 
 class AdminApi(config: Config, bot: Bot) extends LazyLogging with AsyncExecutionPoint {
-
   import FileUtils._
 
   import scala.collection.JavaConverters._
@@ -18,6 +17,12 @@ class AdminApi(config: Config, bot: Bot) extends LazyLogging with AsyncExecution
   private val downloadDir = config.getString("hopcone.bot.download_dir")
   ensureDir(downloadDir)
 
+  lazy val chatId: ChatId =
+    if (adminChannel.startsWith("@")) ChatId(adminChannel)
+    else ChatId(adminChannel.toLong)
+
+  def isAdminChat(chatId: Long): Boolean = chatId == adminChannel.toLong
+
   def notifyChatId(userId: Long, notification: String): Unit =
     bot.request(SendMessage(userId, s">>\n$notification\n>>", parseMode = Some(ParseMode.Markdown)))
 
@@ -26,10 +31,7 @@ class AdminApi(config: Config, bot: Bot) extends LazyLogging with AsyncExecution
 
   def notify(notification: String): Unit = {
     adminUsers.foreach(uid => notifyChatId(uid, notification))
-    if (adminChannel.startsWith("@"))
-      notifyByLogin(adminChannel, notification)
-    else
-      notifyChatId(adminChannel.toLong, notification)
+    bot.request(SendMessage(chatId, notification, parseMode = Some(ParseMode.Markdown)))
   }
 
   def receiveFile(fileId: String, saveAs: String): Future[String] = {

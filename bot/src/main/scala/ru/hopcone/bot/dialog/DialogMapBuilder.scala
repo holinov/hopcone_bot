@@ -1,6 +1,7 @@
 package ru.hopcone.bot.dialog
 
 import ru.hopcone.bot.dao.CategoriesDAO
+import ru.hopcone.bot.dialog.profile.AccountInfoStep
 import ru.hopcone.bot.models.{DatabaseManager, DialogStepContext}
 
 class DialogMapBuilder(implicit db: DatabaseManager, ctx: DialogStepContext) {

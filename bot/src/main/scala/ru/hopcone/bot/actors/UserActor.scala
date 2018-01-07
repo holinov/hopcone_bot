@@ -1,8 +1,9 @@
 package ru.hopcone.bot.actors
 
 import akka.actor.Props
+import akka.pattern.pipe
 import info.mukel.telegrambot4s.models.{User => TUser}
-import ru.hopcone.bot.BotCommands.{BotResponse, UserMessage, UserMessageResponse, UserMessageResponseError}
+import ru.hopcone.bot.BotCommands.{AdminMessage, BotAdminMessageResponse, BotCommand, BotMessageResponse, BotMessageResponseError, BotResponse, UserMessage}
 import ru.hopcone.bot.dao.{CategoriesDAO, ProductsDAO, UserInfoDAO}
 import ru.hopcone.bot.dialog.{DialogMap, DialogMapBuilder, DialogProcessor}
 import ru.hopcone.bot.models.Tables.UserInfoRow
@@ -10,10 +11,9 @@ import ru.hopcone.bot.models._
 import ru.hopcone.bot.state.UserSession
 import ru.hopcone.bot.{AdminApi, AsyncExecutionPoint, Csv}
 
-import scala.concurrent.Await
 import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
 import scala.util.control.NonFatal
-
 
 
 class UserActor(user: TUser, implicit val db: DatabaseManager, implicit val notificator: AdminApi)
@@ -27,19 +27,37 @@ class UserActor(user: TUser, implicit val db: DatabaseManager, implicit val noti
   private val userName: String = user.username getOrElse "No Nickname"
   UserInfoDAO.touchUser(UserInfoRow(user.id, userName, user.id, userName))
 
+
   override def receive: Receive = {
     case requestMessage: UserMessage =>
       val resp = processTextCommand(requestMessage) orElse downloadFile(requestMessage)
       resp.foreach { r =>
-        logger.debug(s"Responding ${pp(r)}")
+        logger.info(s"Responding with ${pp(r)}")
         sender() ! r
+      }
+
+    case adminRequest: AdminMessage =>
+      if (dialogContext.isAdmin && dialogContext.isAdminChat(adminRequest.chatId)) {
+        logger.info(s"Performing admin request:\n${pp(adminRequest)}")
+        val adminCommandFuture = processAdminCommand(adminRequest)
+        adminCommandFuture pipeTo sender()
       }
 
     case x =>
       logger.error(s"WTF? $x")
   }
 
-  private def processTextCommand(requestMessage: UserMessage): Option[BotResponse[UserMessage] with Product with Serializable] = {
+  private def processAdminCommand(adminRequest: AdminMessage): Future[BotAdminMessageResponse] = {
+    Future {
+      adminRequest.text match {
+        case mmm =>
+          logger.info(s"ADMIN_COMMAND:\n${pp(mmm)}")
+          123
+      }
+    } map { _ => BotAdminMessageResponse("123", Seq.empty, adminRequest) }
+  }
+
+  private def processTextCommand(requestMessage: UserMessage): Option[BotResponse[BotCommand]] = {
     val txt = requestMessage.message.text
     val commandResp = txt map { input =>
       try {
@@ -47,13 +65,13 @@ class UserActor(user: TUser, implicit val db: DatabaseManager, implicit val noti
         val nextStep = transitionResult.nextStep
         val title = nextStep.stepText
         val buttons = nextStep.getButtons
-        val response = UserMessageResponse(title, buttons, requestMessage)
+        val response = BotMessageResponse(title, buttons, requestMessage)
         currentDialogStep = nextStep
         response
       } catch {
         case e: MatchError =>
           logger.error(s"Error processing $input", e)
-          UserMessageResponseError(e, requestMessage)
+          BotMessageResponseError(e, requestMessage)
       }
     }
     commandResp
@@ -63,7 +81,7 @@ class UserActor(user: TUser, implicit val db: DatabaseManager, implicit val noti
     val fileOption = requestMessage.message.document
 
     if (!notificator.isAdmin(user.id))
-      Some(UserMessageResponseError(new BotSecurityException, requestMessage))
+      Some(BotMessageResponseError(new BotSecurityException, requestMessage))
     else
       fileOption flatMap { file =>
         for {
@@ -78,14 +96,14 @@ class UserActor(user: TUser, implicit val db: DatabaseManager, implicit val noti
               case Csv.CatsCsvHeader =>
                 logger.info("Updating categories")
                 val categoryRows = Csv.loadCats(fn)
-                CategoriesDAO.forceLoad(categoryRows)
+                CategoriesDAO.forceInsertOrUpdate(categoryRows)
                 dialogMap = new DialogMapBuilder().build
                 logger.info("Updating categories done")
                 s"Список категорий обновлен\nНовые категории:\n${categoryRows.map(r => s"${r.id}:${r.parentId getOrElse ""} -> ${r.name}").mkString("\n")}"
               case Csv.ItemsCsvHeader =>
                 logger.info("Updating items")
                 val itemRows = Csv.loadItems(fn)
-                ProductsDAO.forceLoad(itemRows)
+                ProductsDAO.forceInsertOrUpdate(itemRows)
                 logger.info("Updating items done")
                 s"Список товаров обрновлен\nНовые товары:\n${itemRows.map(r => s"${r.id}:${r.categoryId getOrElse "????"} -> ${r.name} : ${r.price} руб").mkString("\n")}"
             }
@@ -95,7 +113,7 @@ class UserActor(user: TUser, implicit val db: DatabaseManager, implicit val noti
               e.getMessage
           } map { t =>
             notificator.notify(t)
-            UserMessageResponse(t, Seq.empty, requestMessage)
+            BotMessageResponse(t, Seq.empty, requestMessage)
           }
       } map { f => Await.result(f, 10.seconds) }
   }

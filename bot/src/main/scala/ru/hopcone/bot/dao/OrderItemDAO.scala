@@ -10,6 +10,7 @@ import slick.jdbc.PostgresProfile.api._
 
 
 object OrderItemDAO extends AbstractDAO[OrderItemRow] {
+
   val OrderStateNew = "new"
   val OrderStateCheckout = "checkout"
   val OrderStateDelivered = "delivered"
@@ -61,9 +62,17 @@ object OrderItemDAO extends AbstractDAO[OrderItemRow] {
     run(OrderItem += OrderItemRow(order.orderId, item.id, amount, amount * item.price, 0))
   }
 
+  def itemCount(order: OrderDataRow)
+               (implicit db: DatabaseManager): Int =
+    run(selectOrderItemsQuery(order).size.result)
+
   def items(order: OrderDataRow)
            (implicit db: DatabaseManager): Seq[models.Tables.OrderItemRow] =
-    run(OrderItem.filter(_.orderId === order.orderId).result)
+    run(selectOrderItemsQuery(order).result)
+
+  private def selectOrderItemsQuery(order: _root_.ru.hopcone.bot.models.Tables.OrderDataRow) = {
+    OrderItem.filter(_.orderId === order.orderId)
+  }
 
   def item(order: OrderDataRow, itemId: Int)
           (implicit db: DatabaseManager): Option[bot.models.Tables.OrderItemRow] =
