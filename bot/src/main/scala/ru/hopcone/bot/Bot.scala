@@ -46,18 +46,27 @@ class Bot(config: Config, db: DatabaseManager) extends TelegramBot
 
   onMessage { implicit msg =>
     logger.debug(s"$sep\nReceived msg: ${writePretty(msg)}\n$sep")
-    askBot(UserMessage(msg)) { resp: BotMessageResponse =>
+    askBot[UserMessage,BotMessageResponse](UserMessage(msg)) { resp =>
       renderResponse(resp)
     }
   }
 
   onChannelPost { implicit msg =>
     logger.debug(s"$sep\nReceived channel msg: ${writePretty(msg)}\n$sep")
-    if (msg.text.isDefined && msg.text.contains("@fruttech_bot tellid")) {
+    if (msg.text.isDefined && msg.text.contains("tellid")) {
       reply(s"Channel chat id: ${msg.chat.id}", replyToMessageId = Some(msg.messageId))
-    }
-    askBot(AdminMessage(msg)) { resp: BotMessageResponse =>
-      renderResponse(resp)
+    }else {
+
+      (botActor ? AdminMessage(msg))
+        .map(r => r.asInstanceOf[BotAdminMessageResponse])
+        .foreach(r => {
+          renderResponse(r)
+        })
+
+//      askBot[AdminMessage,BotAdminMessageResponse](AdminMessage(msg)) { resp =>
+//        logger.info(s"$resp")
+//        renderResponse(resp)
+//      }
     }
   }
 

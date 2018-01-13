@@ -3,7 +3,7 @@ package ru.hopcone.bot.actors
 import akka.actor.Props
 import akka.pattern.pipe
 import info.mukel.telegrambot4s.models.{User => TUser}
-import ru.hopcone.bot.BotCommands.{AdminMessage, BotAdminMessageResponse, BotCommand, BotMessageResponse, BotMessageResponseError, BotResponse, UserMessage}
+import ru.hopcone.bot.BotCommands.{AdminMessage, BotAdminMessageResponse, BotMessageResponse, BotMessageResponseError, BotResponse, UserMessage}
 import ru.hopcone.bot.dao.{CategoriesDAO, ProductsDAO, UserInfoDAO}
 import ru.hopcone.bot.dialog.{DialogMap, DialogMapBuilder, DialogProcessor}
 import ru.hopcone.bot.models.Tables.UserInfoRow
@@ -12,14 +12,16 @@ import ru.hopcone.bot.state.UserSession
 import ru.hopcone.bot.{AdminApi, AsyncExecutionPoint, Csv}
 
 import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.util.control.NonFatal
 
 
+
 class UserActor(user: TUser, implicit val db: DatabaseManager, implicit val notificator: AdminApi)
-  extends BasicActor with AsyncExecutionPoint {
+  extends BasicActor with AsyncExecutionPoint with AdminApiCommands {
   private implicit val dialogContext: DialogStepContext = DialogStepContext(UserSession(user))
   private implicit var dialogMap: DialogMap = new DialogMapBuilder().build
+  override protected implicit val ex: ExecutionContext = context.dispatcher
 
   private val dialogProcessor = new DialogProcessor(dialogMap)
   private var currentDialogStep = dialogProcessor.step
@@ -37,27 +39,30 @@ class UserActor(user: TUser, implicit val db: DatabaseManager, implicit val noti
       }
 
     case adminRequest: AdminMessage =>
-      if (dialogContext.isAdmin && dialogContext.isAdminChat(adminRequest.chatId)) {
-        logger.info(s"Performing admin request:\n${pp(adminRequest)}")
-        val adminCommandFuture = processAdminCommand(adminRequest)
-        adminCommandFuture pipeTo sender()
+      val isAdmin = dialogContext.isAdmin
+      val isAdminChat = dialogContext.isAdminChat(adminRequest.chatId)
+      logger.debug(s"[$isAdmin:$isAdminChat] Performing admin request:\n${pp(adminRequest)}")
+      if (isAdmin || isAdminChat) {
+        logger.info(s"Performing admin request:\n${pp(adminRequest)} respond to ${sender()}")
+        val result = processAdminCommand(adminRequest)
+        result pipeTo sender()
       }
 
     case x =>
       logger.error(s"WTF? $x")
   }
 
-  private def processAdminCommand(adminRequest: AdminMessage): Future[BotAdminMessageResponse] = {
-    Future {
-      adminRequest.text match {
-        case mmm =>
-          logger.info(s"ADMIN_COMMAND:\n${pp(mmm)}")
-          123
-      }
-    } map { _ => BotAdminMessageResponse("123", Seq.empty, adminRequest) }
-  }
+  //  private def processAdminCommand(adminRequest: AdminMessage): Future[BotAdminMessageResponse] = {
+  //    Future {
+  //      adminRequest.text match {
+  //        case mmm =>
+  //          logger.info(s"ADMIN_COMMAND:\n${pp(mmm)}")
+  //          123
+  //      }
+  //    } map { _ => BotAdminMessageResponse("123", Seq.empty, adminRequest) }
+  //  }
 
-  private def processTextCommand(requestMessage: UserMessage): Option[BotResponse[BotCommand]] = {
+  private def processTextCommand(requestMessage: UserMessage): Option[BotResponse[_]] = {
     val txt = requestMessage.message.text
     val commandResp = txt map { input =>
       try {

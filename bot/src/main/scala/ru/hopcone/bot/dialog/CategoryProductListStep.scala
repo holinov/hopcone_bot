@@ -11,14 +11,6 @@ case class CategoryProductListStep(category: ShopCategoryRow, products: Seq[Shop
 
   override def buttons: Seq[String] = products.map(_.name.toString)
 
-  //  override def transitions: PartialFunction[String, DialogStep] = {
-  //    case productName =>
-  //      products.find(_.name == productName) match {
-  //        case Some(p) => AddToCartStep(p, this)
-  //        case None => this
-  //      }
-  //  }
-
   override protected def onTransition: PartialFunction[String, DialogStep] = {
     case productName =>
       products.find(_.name == productName) match {

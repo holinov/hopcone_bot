@@ -9,6 +9,8 @@ import ru.hopcone.bot.{AdminApi, models}
 
 case class DialogStepContext(user: UserSession, private var ord: Option[OrderDataRow] = None)
                             (implicit database: DatabaseManager, notificator: AdminApi) {
+  def orderId = order.get.orderId
+
   def isAdminChat(chatId: Long): Boolean = notificator.isAdminChat(chatId)
 
 

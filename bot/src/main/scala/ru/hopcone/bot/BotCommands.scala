@@ -36,8 +36,8 @@ object BotCommands extends DefaultImplicits {
     def chatId: Long = message.chat.id
   }
 
-  case class BotMessageResponse(title: String, buttons: Seq[String], request: BotCommand)
-    extends BotResponse[BotCommand]
+  case class BotMessageResponse(title: String, buttons: Seq[String], request: UserMessage)
+    extends BotResponse[UserMessage]
   {
     override def text: Option[String] = title
   }

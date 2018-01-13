@@ -16,7 +16,7 @@ case class AccountInfoStep(prevStepFactory: () => DialogStep)
         s"""|Информация о профиле
             | ${ctx.userId}:${ctx.userName getOrElse "No Nickname"}
             | Всего заказов: ${ctx.user.get.totalOrders}
-            | В вашей корзине ${ctx.cartSize} суммарно на ${ctx.cartTotalPrice}
+            | В вашей корзине ${ctx.cartSize} суммарно на ${ctx.cartTotalPrice.formatted("%.2f")}
         """.stripMargin)
     respBuilder.toString()
   }
@@ -26,12 +26,6 @@ case class AccountInfoStep(prevStepFactory: () => DialogStep)
 
   override protected def onTransition: PartialFunction[String, DialogStep] = {
     case CartButton => ShowCartStep(this)
-  }
-
-  private def debugInfo(sb: StringBuilder) = {
-    sb.append("-" * 10).append("\n")
-    sb.append(s"CTX: $ctx")
-    sb.append("-" * 10).append("\n")
   }
 
   override def prevStep: DialogStep = prevStepFactory()

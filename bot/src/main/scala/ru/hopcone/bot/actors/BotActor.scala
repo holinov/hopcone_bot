@@ -27,12 +27,8 @@ class BotActor(override val db: DatabaseManager, val notificator: AdminApi)
           users += user.id -> user
           route(user.id, r)
         case None =>
-          AdminChannelsActor ! r
+          AdminChannelsActor forward  r
       }
-
-    //      val user: User = r.message.from.get
-    //      users += user.id -> user
-    //      route(user.id, r)
   }
 
   override def createChild(id: Int): ActorRef = {

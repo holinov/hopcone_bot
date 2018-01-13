@@ -6,7 +6,7 @@ import ru.hopcone.bot.models.Tables.{ShopCategoryRow, ShopItemRow}
 import scala.io.Source
 
 object Csv {
-  val CatsCsvHeader = Seq("id", "name", "parentId")
+  val CatsCsvHeader = Seq("id", "name", "parentId", "units")
   val ItemsCsvHeader = Seq("id", "name", "categoryId", "price")
 
   def header(file: String): Seq[String] = {
